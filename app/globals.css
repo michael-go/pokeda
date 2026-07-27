@@ -432,11 +432,29 @@ button {
   align-items: center;
   gap: 7px;
   padding: 6px 11px;
+  border: 0;
   border-radius: 999px;
   background: #eef2f7;
   color: #526174;
   font-size: 12px;
   font-weight: 900;
+  cursor: pointer;
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+
+.type-chip:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 12px rgba(34, 54, 95, .1);
+}
+
+.type-chip[aria-pressed="true"] {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+.type-chip:focus-visible {
+  outline: 3px solid #315fd1;
+  outline-offset: 2px;
 }
 
 .type-dot {

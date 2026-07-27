@@ -470,6 +470,7 @@ const ui = {
     opened: "כבר גילית את הפוקימון הזה",
     loadingMore: "טוענים עוד פוקימונים...",
     moreLoaded: "נוספו עוד {count} פוקימונים!",
+    filterByType: "סינון הגלריה לפי {type}",
     loadingProfile: "טוענים את הפרטים...",
     profileError: "אופס, לא הצלחנו לטעון את הפרטים כרגע.",
   },
@@ -494,6 +495,7 @@ const ui = {
     opened: "You already explored this Pokémon",
     loadingMore: "Loading more Pokémon...",
     moreLoaded: "{count} more Pokémon added!",
+    filterByType: "Filter the gallery by {type}",
     loadingProfile: "Loading this profile...",
     profileError: "Oops, we couldn’t load these details right now.",
   },
@@ -919,6 +921,20 @@ export default function Home() {
     choosePokemon(next.slug);
   };
 
+  const applyTypeFilter = (type: PokemonType) => {
+    setFilter(type);
+    setVisibleCount(pokemonBatchSize);
+    setNewPokemonBatch(null);
+
+    if (window.innerWidth < 850) {
+      requestAnimationFrame(() =>
+        document
+          .querySelector(".explorer-panel")
+          ?.scrollIntoView({ behavior: "smooth", block: "start" }),
+      );
+    }
+  };
+
   return (
     <main className={`app type-bg--${selected.types[0]}`} dir={direction}>
       <div className="background-orb background-orb--one" />
@@ -969,10 +985,20 @@ export default function Home() {
               <div>
                 <div className="type-row">
                   {selected.types.map((type) => (
-                    <span className={`type-chip type-chip--${type}`} key={type}>
-                      <span className="type-dot" />
+                    <button
+                      className={`type-chip type-chip--${type}`}
+                      type="button"
+                      key={type}
+                      onClick={() => applyTypeFilter(type)}
+                      aria-pressed={filter === type}
+                      aria-label={t.filterByType.replace(
+                        "{type}",
+                        typeNames[type][language],
+                      )}
+                    >
+                      <span className="type-dot" aria-hidden="true" />
                       {typeNames[type][language]}
-                    </span>
+                    </button>
                   ))}
                 </div>
                 <h2>{selected.name[language]}</h2>
@@ -989,7 +1015,6 @@ export default function Home() {
                 >
                   <span aria-hidden="true">🔊</span>
                 </button>
-                <Pokeball small />
                 {soundError ? <small className="sound-error" role="status">{t.soundError}</small> : null}
               </div>
             </div>
