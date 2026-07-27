@@ -758,17 +758,69 @@ button {
   transform: translateY(-2px) rotate(-1deg);
 }
 
+.filter-shell {
+  position: relative;
+  z-index: 3;
+  flex: 0 0 auto;
+  min-width: 0;
+  margin: 12px 0 10px;
+  isolation: isolate;
+}
+
 .filter-row {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-wrap: nowrap;
   align-items: center;
   gap: 7px;
-  margin: 16px 0 14px;
-  padding: 2px 2px 8px;
+  min-height: 50px;
+  padding: 8px;
+  border: 1px solid #edf1f6;
+  border-radius: 16px;
+  background: #f7f9fc;
   overflow-x: auto;
   overflow-y: hidden;
+  scroll-padding-inline: 8px;
+  overscroll-behavior-inline: contain;
   scrollbar-width: none;
   -ms-overflow-style: none;
+}
+
+.filter-shell.has-more::after {
+  content: "›";
+  position: absolute;
+  z-index: 2;
+  inset-block: 1px;
+  inset-inline-end: 1px;
+  display: grid;
+  width: 42px;
+  place-items: center;
+  border-radius: 0 15px 15px 0;
+  background: linear-gradient(to right, rgba(247, 249, 252, 0), #f7f9fc 52%);
+  color: #315fd1;
+  font-size: 23px;
+  font-weight: 900;
+  line-height: 1;
+  pointer-events: none;
+  animation: filter-more-hint 1.2s ease-in-out infinite;
+}
+
+[dir="rtl"] .filter-shell.has-more::after {
+  border-radius: 15px 0 0 15px;
+  background: linear-gradient(to left, rgba(247, 249, 252, 0), #f7f9fc 52%);
+  transform: rotate(180deg);
+}
+
+@keyframes filter-more-hint {
+  0%,
+  100% {
+    opacity: .72;
+  }
+
+  50% {
+    opacity: 1;
+  }
 }
 
 .filter-row::-webkit-scrollbar {
@@ -776,15 +828,21 @@ button {
 }
 
 .filter-row button {
+  display: inline-flex;
   flex: 0 0 auto;
-  padding: 7px 12px;
+  align-items: center;
+  justify-content: center;
+  min-height: 32px;
+  padding: 7px 13px;
   border: 1px solid #e1e7f0;
   border-radius: 999px;
   background: white;
   color: #697890;
   font-size: 11px;
   font-weight: 900;
+  line-height: 1.15;
   cursor: pointer;
+  box-shadow: 0 1px 3px rgba(34, 54, 95, .05);
 }
 
 .filter-row button.is-active {
@@ -1147,8 +1205,12 @@ button {
     min-height: 40px;
   }
 
+  .filter-shell {
+    margin-top: 12px;
+  }
+
   .filter-row {
-    margin-top: 13px;
+    padding-inline: 9px;
   }
 
   .pokemon-grid {

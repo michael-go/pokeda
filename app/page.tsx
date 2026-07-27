@@ -634,7 +634,10 @@ export default function Home() {
   const [detailsBySlug, setDetailsBySlug] =
     useState<Record<string, PokemonDetails>>(curatedDetails);
   const [profileErrorSlug, setProfileErrorSlug] = useState<string | null>(null);
+  const [showFilterScrollHint, setShowFilterScrollHint] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const filterRowRef = useRef<HTMLDivElement | null>(null);
+  const filterEndRef = useRef<HTMLButtonElement | null>(null);
   const t = ui[language];
   const selected = catalog.find((item) => item.slug === selectedSlug) ?? catalog[0];
   const selectedDetails = detailsBySlug[selected.slug];
@@ -661,6 +664,23 @@ export default function Home() {
   useEffect(() => {
     return () => audioRef.current?.pause();
   }, []);
+
+  useEffect(() => {
+    const row = filterRowRef.current;
+    const finalFilter = filterEndRef.current;
+
+    if (!row || !finalFilter || !("IntersectionObserver" in window)) {
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => setShowFilterScrollHint(!entry.isIntersecting),
+      { root: row, threshold: 0.98 },
+    );
+
+    observer.observe(finalFilter);
+    return () => observer.disconnect();
+  }, [language]);
 
   useEffect(() => {
     let cancelled = false;
@@ -980,20 +1000,27 @@ export default function Home() {
             </button>
           </div>
 
-          <div className="filter-row" aria-label="Pokémon types">
-            {filters.map((item) => (
-              <button
-                type="button"
-                key={item}
-                className={filter === item ? "is-active" : ""}
-                onClick={() => {
-                  setFilter(item);
-                  setVisibleCount(pokemonBatchSize);
-                }}
-              >
-                {item === "all" ? t.all : typeNames[item][language]}
-              </button>
-            ))}
+          <div className={`filter-shell ${showFilterScrollHint ? "has-more" : ""}`}>
+            <div
+              ref={filterRowRef}
+              className="filter-row"
+              aria-label="Pokémon types"
+            >
+              {filters.map((item, index) => (
+                <button
+                  ref={index === filters.length - 1 ? filterEndRef : undefined}
+                  type="button"
+                  key={item}
+                  className={filter === item ? "is-active" : ""}
+                  onClick={() => {
+                    setFilter(item);
+                    setVisibleCount(pokemonBatchSize);
+                  }}
+                >
+                  {item === "all" ? t.all : typeNames[item][language]}
+                </button>
+              ))}
+            </div>
           </div>
 
           <div className="result-title">
