@@ -299,7 +299,7 @@ const pokemon: Pokemon[] = [
 
 const ui = {
   he: {
-    title: "פּוֹקֵדָה",
+    title: "פוקדע",
     eyebrow: "הפוקדקס שלי",
     tagline: "עולם של פוקימונים מחכה לך!",
     search: "חיפוש לפי שם...",
@@ -318,7 +318,7 @@ const ui = {
     branchNote: "לאיווי יש כמה אפשרויות התפתחות!",
   },
   en: {
-    title: "POKEDA",
+    title: "פוקדע",
     eyebrow: "My Pokédex",
     tagline: "A world of Pokémon is waiting for you!",
     search: "Search by name...",

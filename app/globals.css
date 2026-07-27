@@ -685,14 +685,12 @@ button {
 
 .filter-row {
   display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   gap: 7px;
   margin: 16px 0 14px;
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-
-.filter-row::-webkit-scrollbar {
-  display: none;
+  padding: 2px;
+  overflow: visible;
 }
 
 .filter-row button {
