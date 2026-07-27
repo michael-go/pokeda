@@ -798,7 +798,7 @@ button {
   position: absolute;
   z-index: 2;
   inset-block: 1px;
-  inset-inline-end: 1px;
+  right: 1px;
   display: grid;
   width: 42px;
   place-items: center;
@@ -816,6 +816,8 @@ button {
 
 [dir="rtl"] .filter-shell.has-more::after {
   content: "‹";
+  right: auto;
+  left: 1px;
   border-radius: 15px 0 0 15px;
   background: linear-gradient(to left, rgba(247, 249, 252, 0), #f7f9fc 52%);
 }
