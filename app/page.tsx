@@ -545,14 +545,21 @@ function ProgressivePokemonImage({
   alt,
   width,
   height,
+  className,
+  loading = "lazy",
+  artworkDelay = 450,
 }: {
   id: number;
   alt: string;
   width: number;
   height: number;
+  className?: string;
+  loading?: "eager" | "lazy";
+  artworkDelay?: number;
 }) {
   const imageRef = useRef<HTMLImageElement | null>(null);
-  const [showArtwork, setShowArtwork] = useState(false);
+  const [loadedArtworkId, setLoadedArtworkId] = useState<number | null>(null);
+  const showArtwork = loadedArtworkId === id;
 
   useEffect(() => {
     let active = true;
@@ -563,11 +570,11 @@ function ProgressivePokemonImage({
     const preloadArtwork = () => {
       artwork = new Image();
       artwork.decoding = "async";
-      artwork.fetchPriority = "low";
+      artwork.fetchPriority = loading === "eager" ? "high" : "low";
       artwork.onload = () => {
         const reveal = () => {
           if (active) {
-            setShowArtwork(true);
+            setLoadedArtworkId(id);
           }
         };
 
@@ -577,7 +584,12 @@ function ProgressivePokemonImage({
     };
 
     const scheduleArtwork = () => {
-      loadTimer = window.setTimeout(preloadArtwork, 450);
+      if (artworkDelay <= 0) {
+        preloadArtwork();
+        return;
+      }
+
+      loadTimer = window.setTimeout(preloadArtwork, artworkDelay);
     };
 
     if (imageRef.current && "IntersectionObserver" in window) {
@@ -605,17 +617,18 @@ function ProgressivePokemonImage({
         artwork.onload = null;
       }
     };
-  }, [id]);
+  }, [artworkDelay, id, loading]);
 
   return (
     <img
+      key={id}
       ref={imageRef}
-      className={`progressive-pokemon-image ${showArtwork ? "is-enhanced" : ""}`}
+      className={`${className ? `${className} ` : ""}progressive-pokemon-image ${showArtwork ? "is-enhanced" : ""}`}
       src={showArtwork ? artUrl(id) : spriteUrl(id)}
       alt={alt}
       width={width}
       height={height}
-      loading="lazy"
+      loading={loading}
       decoding="async"
     />
   );
@@ -874,12 +887,15 @@ export default function Home() {
             <div className="hero-sparkle hero-sparkle--one" aria-hidden="true">✦</div>
             <div className="hero-sparkle hero-sparkle--two" aria-hidden="true">✧</div>
             <div className="hero-ring" aria-hidden="true" />
-            <img
+            <ProgressivePokemonImage
+              key={selected.id}
               className="hero-image"
-              src={artUrl(selected.id)}
+              id={selected.id}
               alt={selected.name[language]}
               width={380}
               height={380}
+              loading="eager"
+              artworkDelay={0}
             />
             <div className="hero-shadow" aria-hidden="true" />
           </div>

@@ -620,6 +620,10 @@ button {
   animation: artwork-reveal .28s ease-out both;
 }
 
+.hero-image.progressive-pokemon-image.is-enhanced {
+  animation: artwork-reveal .28s ease-out both, float 4.2s ease-in-out infinite;
+}
+
 @keyframes artwork-reveal {
   from {
     opacity: .65;
