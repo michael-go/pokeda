@@ -411,47 +411,13 @@ button {
   line-height: 1.7;
 }
 
-.quick-facts {
-  display: flex;
-  align-items: stretch;
-  gap: 20px;
-  margin: 19px 0;
-  padding: 14px 18px;
-  border-radius: 18px;
-  background: #f7f9fc;
-}
-
-.quick-facts > div:not(.fact-divider) {
-  flex: 1;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
-}
-
-.quick-facts span {
-  color: #8995a8;
-  font-size: 12px;
-  font-weight: 800;
-}
-
-.quick-facts strong {
-  font-size: 13px;
-  direction: ltr;
-}
-
-.fact-divider {
-  width: 1px;
-  background: #dde4ef;
-}
-
 .powers-block {
-  margin-top: 4px;
+  margin-top: 22px;
 }
 
 .power-list {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
   gap: 8px;
 }
 
@@ -877,10 +843,6 @@ button {
     grid-template-columns: minmax(260px, 40%) 1fr;
   }
 
-  .power-list {
-    grid-template-columns: 1fr;
-  }
-
   .pokemon-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -991,9 +953,6 @@ button {
     font-size: clamp(36px, 10vw, 50px);
   }
 
-  .power-list {
-    grid-template-columns: repeat(3, 1fr);
-  }
 }
 
 @media (max-width: 540px) {
@@ -1025,15 +984,6 @@ button {
   .hero-ring {
     width: 200px;
     height: 200px;
-  }
-
-  .quick-facts {
-    gap: 12px;
-  }
-
-  .quick-facts > div:not(.fact-divider) {
-    display: grid;
-    gap: 3px;
   }
 
   .power-list {

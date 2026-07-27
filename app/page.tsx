@@ -12,8 +12,6 @@ type Pokemon = {
   description: { he: string; en: string };
   powers: { he: string[]; en: string[] };
   types: PokemonType[];
-  height: string;
-  weight: string;
   chain: string[];
 };
 
@@ -37,10 +35,8 @@ const pokemon: Pokemon[] = [
       he: "פוקימון קטן ואמיץ שנולד עם זרע על הגב. הוא אוהב לנמנם בשמש כדי שהצמח שלו יגדל.",
       en: "A brave little Pokémon born with a seed on its back. It loves sunny naps that help its plant grow.",
     },
-    powers: { he: ["שוט גפן", "עלה תער", "אבקת שינה"], en: ["Vine Whip", "Razor Leaf", "Sleep Powder"] },
+    powers: { he: ["שוט גפן", "עלה תער", "אבקת שינה", "זרע עלוקה", "קרן שמש"], en: ["Vine Whip", "Razor Leaf", "Sleep Powder", "Leech Seed", "Solar Beam"] },
     types: ["grass", "poison"],
-    height: "0.7 m",
-    weight: "6.9 kg",
     chain: ["bulbasaur", "ivysaur", "venusaur"],
   },
   {
@@ -51,10 +47,8 @@ const pokemon: Pokemon[] = [
       he: "הניצן שעל גבו גדל ורגליו נעשו חזקות. כשהפרח עומד לפרוח, הוא מפיץ ריח מתוק.",
       en: "The bud on its back has grown and its legs are stronger. A sweet smell appears just before it blooms.",
     },
-    powers: { he: ["קרן שמש", "שוט גפן", "ריח מתוק"], en: ["Solar Beam", "Vine Whip", "Sweet Scent"] },
+    powers: { he: ["קרן שמש", "שוט גפן", "ריח מתוק", "עלה תער", "צמיחה"], en: ["Solar Beam", "Vine Whip", "Sweet Scent", "Razor Leaf", "Growth"] },
     types: ["grass", "poison"],
-    height: "1.0 m",
-    weight: "13.0 kg",
     chain: ["bulbasaur", "ivysaur", "venusaur"],
   },
   {
@@ -65,10 +59,8 @@ const pokemon: Pokemon[] = [
       he: "הפרח הענק שלו אוסף אור שמש והופך אותו לאנרגיה. הוא יכול להרגיע אחרים בעזרת הריח שלו.",
       en: "Its huge flower gathers sunlight and turns it into energy. Its gentle scent can calm others.",
     },
-    powers: { he: ["קרן שמש", "סערת עלים", "רעידת אדמה"], en: ["Solar Beam", "Petal Blizzard", "Earthquake"] },
+    powers: { he: ["קרן שמש", "סערת עלים", "רעידת אדמה", "פצצת בוץ", "סינתזה"], en: ["Solar Beam", "Petal Blizzard", "Earthquake", "Sludge Bomb", "Synthesis"] },
     types: ["grass", "poison"],
-    height: "2.0 m",
-    weight: "100.0 kg",
     chain: ["bulbasaur", "ivysaur", "venusaur"],
   },
   {
@@ -79,10 +71,8 @@ const pokemon: Pokemon[] = [
       he: "לטאת אש סקרנית עם להבה בקצה הזנב. כשהיא שמחה, הלהבה רוקדת ומנצנצת.",
       en: "A curious fire lizard with a flame on its tail. When it is happy, the flame dances and sparkles.",
     },
-    powers: { he: ["גחלת", "שריטה", "מסך עשן"], en: ["Ember", "Scratch", "Smokescreen"] },
+    powers: { he: ["גחלת", "שריטה", "מסך עשן", "נשימת דרקון", "ניב אש"], en: ["Ember", "Scratch", "Smokescreen", "Dragon Breath", "Fire Fang"] },
     types: ["fire"],
-    height: "0.6 m",
-    weight: "8.5 kg",
     chain: ["charmander", "charmeleon", "charizard"],
   },
   {
@@ -93,10 +83,8 @@ const pokemon: Pokemon[] = [
       he: "פוקימון נמרץ שמתאמן בלי הפסקה. זנבו הבוער מאיר מערות חשוכות.",
       en: "An energetic Pokémon that never stops training. Its blazing tail lights up dark caves.",
     },
-    powers: { he: ["ניב אש", "טפר דרקון", "להביור"], en: ["Fire Fang", "Dragon Claw", "Flamethrower"] },
+    powers: { he: ["ניב אש", "טפר דרקון", "להביור", "חיתוך", "פרצוף מפחיד"], en: ["Fire Fang", "Dragon Claw", "Flamethrower", "Slash", "Scary Face"] },
     types: ["fire"],
-    height: "1.1 m",
-    weight: "19.0 kg",
     chain: ["charmander", "charmeleon", "charizard"],
   },
   {
@@ -107,10 +95,8 @@ const pokemon: Pokemon[] = [
       he: "דרקון אש עוצמתי שאוהב לעוף גבוה. הוא שומר את הלהבות החמות ביותר ליריבים חזקים.",
       en: "A powerful fire flyer that loves soaring high. It saves its hottest flames for strong opponents.",
     },
-    powers: { he: ["להביור", "טופר דרקון", "טיסה"], en: ["Flamethrower", "Dragon Claw", "Fly"] },
+    powers: { he: ["להביור", "טופר דרקון", "טיסה", "סחרור אש", "חיתוך אווירי", "תופת"], en: ["Flamethrower", "Dragon Claw", "Fly", "Fire Spin", "Air Slash", "Inferno"] },
     types: ["fire", "flying"],
-    height: "1.7 m",
-    weight: "90.5 kg",
     chain: ["charmander", "charmeleon", "charizard"],
   },
   {
@@ -121,10 +107,8 @@ const pokemon: Pokemon[] = [
       he: "צבון שובב שמסתתר בשריון החזק שלו. הוא יורה מים בדיוק מפתיע.",
       en: "A playful turtle that hides inside its strong shell. It sprays water with surprising accuracy.",
     },
-    powers: { he: ["אקדח מים", "סיבוב מהיר", "בועות"], en: ["Water Gun", "Rapid Spin", "Bubble"] },
+    powers: { he: ["אקדח מים", "סיבוב מהיר", "בועות", "נשיכה", "התכנסות בשריון"], en: ["Water Gun", "Rapid Spin", "Bubble", "Bite", "Withdraw"] },
     types: ["water"],
-    height: "0.5 m",
-    weight: "9.0 kg",
     chain: ["squirtle", "wartortle", "blastoise"],
   },
   {
@@ -135,10 +119,8 @@ const pokemon: Pokemon[] = [
       he: "שחיין מהיר שמאזן את עצמו בעזרת הזנב הרך. השריון שלו נעשה חזק יותר עם השנים.",
       en: "A speedy swimmer that balances with its fluffy tail. Its shell becomes tougher as it grows.",
     },
-    powers: { he: ["נשיכת מים", "גלישה", "הגנת שריון"], en: ["Aqua Tail", "Surf", "Shell Defense"] },
+    powers: { he: ["זנב מים", "גלישה", "התכנסות בשריון", "פעימת מים", "נשיכה"], en: ["Aqua Tail", "Surf", "Withdraw", "Water Pulse", "Bite"] },
     types: ["water"],
-    height: "1.0 m",
-    weight: "22.5 kg",
     chain: ["squirtle", "wartortle", "blastoise"],
   },
   {
@@ -149,10 +131,8 @@ const pokemon: Pokemon[] = [
       he: "תותחי המים שבשריון שלו חזקים ומדויקים. הוא עומד יציב גם מול גלים ענקיים.",
       en: "The water cannons in its shell are powerful and precise. It stands firm even against giant waves.",
     },
-    powers: { he: ["הידרו פאמפ", "תותח מים", "סופת שלג"], en: ["Hydro Pump", "Water Cannon", "Blizzard"] },
+    powers: { he: ["הידרו פאמפ", "תותח הידרו", "סופת שלג", "נגיחת גולגולת", "תותח הבזק", "גלישה"], en: ["Hydro Pump", "Hydro Cannon", "Blizzard", "Skull Bash", "Flash Cannon", "Surf"] },
     types: ["water"],
-    height: "1.6 m",
-    weight: "85.5 kg",
     chain: ["squirtle", "wartortle", "blastoise"],
   },
   {
@@ -163,10 +143,8 @@ const pokemon: Pokemon[] = [
       he: "פוקימון תינוק מלא אנרגיה. הוא עדיין לומד לשלוט בניצוצות שיוצאים מלחייו.",
       en: "A tiny Pokémon bursting with energy. It is still learning to control the sparks from its cheeks.",
     },
-    powers: { he: ["הלם רעם", "קסם", "מתקפה מהירה"], en: ["Thunder Shock", "Charm", "Quick Attack"] },
+    powers: { he: ["הלם רעם", "קסם", "מתקפה מהירה", "נשיקה מתוקה", "ליטוף חשמלי"], en: ["Thunder Shock", "Charm", "Quick Attack", "Sweet Kiss", "Nuzzle"] },
     types: ["electric"],
-    height: "0.3 m",
-    weight: "2.0 kg",
     chain: ["pichu", "pikachu", "raichu"],
   },
   {
@@ -177,10 +155,8 @@ const pokemon: Pokemon[] = [
       he: "עכבר חשמלי חברותי שאוגר חשמל בלחיים. כשהוא מתרגש, ניצוצות קטנים קופצים סביבו.",
       en: "A friendly electric mouse that stores power in its cheeks. Tiny sparks jump when it gets excited.",
     },
-    powers: { he: ["מכת ברק", "זנב ברזל", "מתקפה מהירה"], en: ["Thunderbolt", "Iron Tail", "Quick Attack"] },
+    powers: { he: ["מכת ברק", "זנב ברזל", "מתקפה מהירה", "כדור חשמלי", "הסתערות וולט", "גל רעם"], en: ["Thunderbolt", "Iron Tail", "Quick Attack", "Electro Ball", "Volt Tackle", "Thunder Wave"] },
     types: ["electric"],
-    height: "0.4 m",
-    weight: "6.0 kg",
     chain: ["pichu", "pikachu", "raichu"],
   },
   {
@@ -191,10 +167,8 @@ const pokemon: Pokemon[] = [
       he: "זנבו הארוך עוזר לו לפרוק חשמל עודף. הוא יכול להאיר חדר שלם בניצוץ אחד.",
       en: "Its long tail helps release extra electricity. One bright spark can light an entire room.",
     },
-    powers: { he: ["רעם", "מכת מתח", "גל הלם"], en: ["Thunder", "Volt Tackle", "Shock Wave"] },
+    powers: { he: ["רעם", "הסתערות וולט", "גל הלם", "פריקה", "שבירת לבנים", "שדה חשמלי"], en: ["Thunder", "Volt Tackle", "Shock Wave", "Discharge", "Brick Break", "Electric Terrain"] },
     types: ["electric"],
-    height: "0.8 m",
-    weight: "30.0 kg",
     chain: ["pichu", "pikachu", "raichu"],
   },
   {
@@ -205,10 +179,8 @@ const pokemon: Pokemon[] = [
       he: "פוקימון סקרן שיכול להתפתח בדרכים רבות. הוא מסתגל בקלות לכל מקום ולכל חבר חדש.",
       en: "A curious Pokémon that can evolve in many ways. It adapts easily to new places and new friends.",
     },
-    powers: { he: ["מתקפה מהירה", "נשיכה", "עיניים מתוקות"], en: ["Quick Attack", "Bite", "Baby-Doll Eyes"] },
+    powers: { he: ["מתקפה מהירה", "נשיכה", "עיניים מתוקות", "כוכבים מהירים", "מתקפה כפולת־קצה"], en: ["Quick Attack", "Bite", "Baby-Doll Eyes", "Swift", "Double-Edge"] },
     types: ["normal"],
-    height: "0.3 m",
-    weight: "6.5 kg",
     chain: ["eevee", "vaporeon", "jolteon", "flareon"],
   },
   {
@@ -219,10 +191,8 @@ const pokemon: Pokemon[] = [
       he: "התפתחות המים של איווי. הסנפירים והזנב שלה הופכים אותה לשחיינית נהדרת.",
       en: "Eevee’s water evolution. Its fins and tail make it a wonderful swimmer.",
     },
-    powers: { he: ["פעימת מים", "גלישה", "קרן קפואה"], en: ["Water Pulse", "Surf", "Aurora Beam"] },
+    powers: { he: ["פעימת מים", "גלישה", "קרן קפואה", "הידרו פאמפ", "טבעת מים"], en: ["Water Pulse", "Surf", "Aurora Beam", "Hydro Pump", "Aqua Ring"] },
     types: ["water"],
-    height: "1.0 m",
-    weight: "29.0 kg",
     chain: ["eevee", "vaporeon", "jolteon", "flareon"],
   },
   {
@@ -233,10 +203,8 @@ const pokemon: Pokemon[] = [
       he: "התפתחות החשמל המהירה של איווי. הפרווה הקוצנית שלו נטענת באנרגיה.",
       en: "Eevee’s speedy electric evolution. Its spiky fur crackles with energy.",
     },
-    powers: { he: ["מכת ברק", "כדור חשמלי", "זריזות"], en: ["Thunderbolt", "Electro Ball", "Agility"] },
+    powers: { he: ["מכת ברק", "כדור חשמלי", "זריזות", "טילי סיכה", "גל רעם"], en: ["Thunderbolt", "Electro Ball", "Agility", "Pin Missile", "Thunder Wave"] },
     types: ["electric"],
-    height: "0.8 m",
-    weight: "24.5 kg",
     chain: ["eevee", "vaporeon", "jolteon", "flareon"],
   },
   {
@@ -247,10 +215,8 @@ const pokemon: Pokemon[] = [
       he: "התפתחות האש החמימה של איווי. הפרווה הרכה שלו משחררת חום חזק.",
       en: "Eevee’s warm fire evolution. Its soft fur releases powerful heat.",
     },
-    powers: { he: ["ניב אש", "להביור", "זנב ברזל"], en: ["Fire Fang", "Flamethrower", "Iron Tail"] },
+    powers: { he: ["ניב אש", "להביור", "זנב ברזל", "סחרור אש", "הסתערות אש"], en: ["Fire Fang", "Flamethrower", "Iron Tail", "Fire Spin", "Flare Blitz"] },
     types: ["fire"],
-    height: "0.9 m",
-    weight: "25.0 kg",
     chain: ["eevee", "vaporeon", "jolteon", "flareon"],
   },
   {
@@ -261,10 +227,8 @@ const pokemon: Pokemon[] = [
       he: "זחל קטן שאוכל הרבה עלים כדי לגדול. המחושים שלו עוזרים להרחיק אויבים.",
       en: "A tiny caterpillar that eats lots of leaves to grow. Its antenna helps keep danger away.",
     },
-    powers: { he: ["יריית קורים", "התנגשות", "נשיכת חרק"], en: ["String Shot", "Tackle", "Bug Bite"] },
+    powers: { he: ["יריית קורים", "התנגשות", "נשיכת חרק", "רשת חשמל"], en: ["String Shot", "Tackle", "Bug Bite", "Electroweb"] },
     types: ["bug"],
-    height: "0.3 m",
-    weight: "2.9 kg",
     chain: ["caterpie", "metapod", "butterfree"],
   },
   {
@@ -275,10 +239,8 @@ const pokemon: Pokemon[] = [
       he: "הקליפה הקשה מגינה עליו בזמן שהוא משתנה בפנים ומתכונן לעוף.",
       en: "Its hard shell keeps it safe while it changes inside and prepares to fly.",
     },
-    powers: { he: ["הקשחה", "הגנת ברזל", "שריון"], en: ["Harden", "Iron Defense", "Shell Guard"] },
+    powers: { he: ["הקשחה", "הגנת ברזל", "נשיכת חרק"], en: ["Harden", "Iron Defense", "Bug Bite"] },
     types: ["bug"],
-    height: "0.7 m",
-    weight: "9.9 kg",
     chain: ["caterpie", "metapod", "butterfree"],
   },
   {
@@ -289,10 +251,8 @@ const pokemon: Pokemon[] = [
       he: "כנפיו מכוסות אבקה צבעונית. הוא עף מפרח לפרח ואוסף צוף מתוק.",
       en: "Its wings are covered in colorful powder. It flies from flower to flower gathering sweet nectar.",
     },
-    powers: { he: ["רוח כסופה", "אבקת שינה", "בלבול"], en: ["Silver Wind", "Sleep Powder", "Confusion"] },
+    powers: { he: ["רוח כסופה", "אבקת שינה", "בלבול", "משב רוח", "קרן על־חושית", "מערבולת"], en: ["Silver Wind", "Sleep Powder", "Confusion", "Gust", "Psybeam", "Whirlwind"] },
     types: ["bug", "flying"],
-    height: "1.1 m",
-    weight: "32.0 kg",
     chain: ["caterpie", "metapod", "butterfree"],
   },
   {
@@ -303,10 +263,8 @@ const pokemon: Pokemon[] = [
       he: "בלילה הוא יוצא לטייל לאור הירח. ביום הוא מתחבא באדמה ומשאיר רק את העלים בחוץ.",
       en: "It wanders under the moon at night. By day, it hides underground with only its leaves showing.",
     },
-    powers: { he: ["ספיגה", "אבקת רעל", "ריקוד עלי כותרת"], en: ["Absorb", "Poison Powder", "Petal Dance"] },
+    powers: { he: ["ספיגה", "אבקת רעל", "ריקוד עלי כותרת", "חומצה", "אבקת שינה", "קרן ירח"], en: ["Absorb", "Poison Powder", "Petal Dance", "Acid", "Sleep Powder", "Moonlight"] },
     types: ["grass", "poison"],
-    height: "0.5 m",
-    weight: "5.4 kg",
     chain: ["oddish", "gloom", "vileplume"],
   },
   {
@@ -317,10 +275,8 @@ const pokemon: Pokemon[] = [
       he: "הפרח שעל ראשו מפיץ ריח חזק. כשגלום מרגיש בטוח, הוא פותח את עלי הכותרת שלו.",
       en: "The flower on its head has a powerful scent. When Gloom feels safe, it opens its petals.",
     },
-    powers: { he: ["ריח מתוק", "חומצה", "קרן ירח"], en: ["Sweet Scent", "Acid", "Moonlight"] },
+    powers: { he: ["ריח מתוק", "חומצה", "קרן ירח", "ניקוז ענק", "אבקת שיתוק"], en: ["Sweet Scent", "Acid", "Moonlight", "Mega Drain", "Stun Spore"] },
     types: ["grass", "poison"],
-    height: "0.8 m",
-    weight: "8.6 kg",
     chain: ["oddish", "gloom", "vileplume"],
   },
   {
@@ -331,10 +287,8 @@ const pokemon: Pokemon[] = [
       he: "הפרח הענק שלו מפזר אבקה צבעונית ברוח. הוא אוהב מקומות חמימים ומוארים.",
       en: "Its giant flower scatters colorful pollen on the breeze. It loves warm, sunny places.",
     },
-    powers: { he: ["סערת עלים", "קרן שמש", "אבקת שינה"], en: ["Petal Blizzard", "Solar Beam", "Sleep Powder"] },
+    powers: { he: ["סערת עלים", "קרן שמש", "אבקת שינה", "פצצת בוץ", "ארומתרפיה"], en: ["Petal Blizzard", "Solar Beam", "Sleep Powder", "Sludge Bomb", "Aromatherapy"] },
     types: ["grass", "poison"],
-    height: "1.2 m",
-    weight: "18.6 kg",
     chain: ["oddish", "gloom", "vileplume"],
   },
   {
@@ -345,10 +299,8 @@ const pokemon: Pokemon[] = [
       he: "שועל אש קטן עם זנבות מסולסלים. הוא שולט בלהבות קטנות שנראות כמו אורות מרקדים.",
       en: "A little fire fox with curled tails. It controls tiny flames that look like dancing lights.",
     },
-    powers: { he: ["גחלת", "אש רצון", "מתקפה מהירה"], en: ["Ember", "Will-O-Wisp", "Quick Attack"] },
+    powers: { he: ["גחלת", "אש רצון", "מתקפה מהירה", "סחרור אש", "קרן בלבול", "כישוף"], en: ["Ember", "Will-O-Wisp", "Quick Attack", "Fire Spin", "Confuse Ray", "Hex"] },
     types: ["fire"],
-    height: "0.6 m",
-    weight: "9.9 kg",
     chain: ["vulpix", "ninetales"],
   },
   {
@@ -359,10 +311,8 @@ const pokemon: Pokemon[] = [
       he: "פוקימון אש חכם ואלגנטי בעל תשעה זנבות. הוא נע בשקט ושומר על חבריו.",
       en: "A wise and graceful fire Pokémon with nine tails. It moves quietly and protects its friends.",
     },
-    powers: { he: ["להביור", "סחרור אש", "כוח על-חושי"], en: ["Flamethrower", "Fire Spin", "Extrasensory"] },
+    powers: { he: ["להביור", "סחרור אש", "כוח על־חושי", "אש רצון", "תופת", "מתקפה מהירה"], en: ["Flamethrower", "Fire Spin", "Extrasensory", "Will-O-Wisp", "Inferno", "Quick Attack"] },
     types: ["fire"],
-    height: "1.1 m",
-    weight: "19.9 kg",
     chain: ["vulpix", "ninetales"],
   },
   {
@@ -373,10 +323,8 @@ const pokemon: Pokemon[] = [
       he: "כלבלב אש נאמן ואמיץ. חוש הריח המצוין שלו עוזר לו למצוא חברים גם מרחוק.",
       en: "A loyal and brave fire pup. Its excellent nose helps it find friends from far away.",
     },
-    powers: { he: ["ניב אש", "נהמה", "זריזות"], en: ["Fire Fang", "Roar", "Agility"] },
+    powers: { he: ["ניב אש", "נהמה", "זריזות", "גלגל אש", "נשיכה", "הפלה"], en: ["Fire Fang", "Roar", "Agility", "Flame Wheel", "Bite", "Take Down"] },
     types: ["fire"],
-    height: "0.7 m",
-    weight: "19.0 kg",
     chain: ["growlithe", "arcanine"],
   },
   {
@@ -387,10 +335,8 @@ const pokemon: Pokemon[] = [
       he: "פוקימון מהיר ואצילי שיכול לרוץ למרחקים עצומים. הפרווה שלו מתנופפת כמו אש.",
       en: "A fast and noble Pokémon that can run enormous distances. Its flowing fur looks like fire.",
     },
-    powers: { he: ["מהירות קיצונית", "להביור", "הסתערות פראית"], en: ["Extreme Speed", "Flamethrower", "Wild Charge"] },
+    powers: { he: ["מהירות קיצונית", "להביור", "הסתערות פראית", "ניב אש", "נשיכת מחץ", "הסתערות אש"], en: ["Extreme Speed", "Flamethrower", "Wild Charge", "Fire Fang", "Crunch", "Flare Blitz"] },
     types: ["fire"],
-    height: "1.9 m",
-    weight: "155.0 kg",
     chain: ["growlithe", "arcanine"],
   },
   {
@@ -401,10 +347,8 @@ const pokemon: Pokemon[] = [
       he: "ברווז מבולבל וחמוד שמחזיק את הראש כשהכוחות שלו מתחזקים. לפעמים הוא מפתיע את כולם.",
       en: "A cute, puzzled duck that holds its head when its powers grow. It often surprises everyone.",
     },
-    powers: { he: ["אקדח מים", "בלבול", "שריטה"], en: ["Water Gun", "Confusion", "Scratch"] },
+    powers: { he: ["אקדח מים", "בלבול", "שריטה", "נטרול", "נגיחת זן", "זנב מים"], en: ["Water Gun", "Confusion", "Scratch", "Disable", "Zen Headbutt", "Aqua Tail"] },
     types: ["water"],
-    height: "0.8 m",
-    weight: "19.6 kg",
     chain: ["psyduck", "golduck"],
   },
   {
@@ -415,10 +359,8 @@ const pokemon: Pokemon[] = [
       he: "שחיין מעולה שחוצה אגמים במהירות. היהלום שעל מצחו זוהר כשהוא משתמש בכוחותיו.",
       en: "An expert swimmer that races across lakes. The gem on its forehead glows when it uses its powers.",
     },
-    powers: { he: ["גלישה", "פעימת מים", "כוח על-חושי"], en: ["Surf", "Water Pulse", "Psychic"] },
+    powers: { he: ["גלישה", "פעימת מים", "כוח על־חושי", "סילון מים", "הידרו פאמפ", "בלבול"], en: ["Surf", "Water Pulse", "Psychic", "Aqua Jet", "Hydro Pump", "Confusion"] },
     types: ["water"],
-    height: "1.7 m",
-    weight: "76.6 kg",
     chain: ["psyduck", "golduck"],
   },
   {
@@ -429,10 +371,8 @@ const pokemon: Pokemon[] = [
       he: "חתול סקרן שאוהב דברים נוצצים. הוא מטייל בלילה ומחפש אוצרות קטנים.",
       en: "A curious cat that loves shiny things. It wanders at night looking for tiny treasures.",
     },
-    powers: { he: ["יום תשלום", "שריטה", "נשיכה"], en: ["Pay Day", "Scratch", "Bite"] },
+    powers: { he: ["יום תשלום", "שריטה", "נשיכה", "שריטות זעם", "הטעיה", "חתך לילה"], en: ["Pay Day", "Scratch", "Bite", "Fury Swipes", "Feint", "Night Slash"] },
     types: ["normal"],
-    height: "0.4 m",
-    weight: "4.2 kg",
     chain: ["meowth", "persian"],
   },
   {
@@ -443,10 +383,8 @@ const pokemon: Pokemon[] = [
       he: "חתול מהיר ואלגנטי שנע בצעדים שקטים. האבן שעל מצחו בוהקת באור.",
       en: "A fast and elegant cat that moves with silent steps. The jewel on its forehead shines in the light.",
     },
-    powers: { he: ["חתך לילה", "כוח פנינה", "מהירות"], en: ["Night Slash", "Power Gem", "Swift"] },
+    powers: { he: ["חתך לילה", "כוח פנינה", "כוכבים מהירים", "חיתוך", "הפתעה", "משחק קשוח"], en: ["Night Slash", "Power Gem", "Swift", "Slash", "Fake Out", "Play Rough"] },
     types: ["normal"],
-    height: "1.0 m",
-    weight: "32.0 kg",
     chain: ["meowth", "persian"],
   },
   {
@@ -457,10 +395,8 @@ const pokemon: Pokemon[] = [
       he: "פוקימון מתכתי שמרחף בעזרת כוח מגנטי. הוא נטען כשהוא נמצא ליד חשמל.",
       en: "A metallic Pokémon that floats using magnetism. It charges up whenever electricity is nearby.",
     },
-    powers: { he: ["הלם רעם", "גל מגנטי", "פצצת מראה"], en: ["Thunder Shock", "Magnet Rise", "Mirror Shot"] },
+    powers: { he: ["הלם רעם", "גל מגנטי", "פצצת מראה", "ניצוץ", "על־קולי", "תותח הבזק"], en: ["Thunder Shock", "Magnet Rise", "Mirror Shot", "Spark", "Supersonic", "Flash Cannon"] },
     types: ["electric"],
-    height: "0.3 m",
-    weight: "6.0 kg",
     chain: ["magnemite", "magneton"],
   },
   {
@@ -471,10 +407,8 @@ const pokemon: Pokemon[] = [
       he: "שלושה מגנמייטים שהתחברו לכוח מגנטי חזק. יחד הם יוצרים חשמל רב.",
       en: "Three Magnemite joined by powerful magnetism. Together, they create lots of electricity.",
     },
-    powers: { he: ["תותח הבזק", "מכת ברק", "שדה חשמלי"], en: ["Flash Cannon", "Thunderbolt", "Electric Terrain"] },
+    powers: { he: ["תותח הבזק", "מכת ברק", "שדה חשמלי", "מתקפה משולשת", "פריקה", "גל מגנטי"], en: ["Flash Cannon", "Thunderbolt", "Electric Terrain", "Tri Attack", "Discharge", "Magnet Rise"] },
     types: ["electric"],
-    height: "1.0 m",
-    weight: "60.0 kg",
     chain: ["magnemite", "magneton"],
   },
   {
@@ -485,10 +419,8 @@ const pokemon: Pokemon[] = [
       he: "פוקימון קטן עם תיאבון ענק. הוא שומר חטיפים בפרווה כדי שיוכל לאכול אחר כך.",
       en: "A little Pokémon with a giant appetite. It hides snacks in its fur to eat later.",
     },
-    powers: { he: ["התנגשות", "ליקוק", "מטרונום"], en: ["Tackle", "Lick", "Metronome"] },
+    powers: { he: ["התנגשות", "ליקוק", "מטרונום", "אגירה", "חבטת גוף", "מוצא אחרון"], en: ["Tackle", "Lick", "Metronome", "Stockpile", "Body Slam", "Last Resort"] },
     types: ["normal"],
-    height: "0.6 m",
-    weight: "105.0 kg",
     chain: ["munchlax", "snorlax"],
   },
   {
@@ -499,10 +431,8 @@ const pokemon: Pokemon[] = [
       he: "ענק עדין שאוהב לאכול ולישון. כשהוא מתעורר, יש לו כוח מפתיע ואופי רגוע.",
       en: "A gentle giant that loves eating and sleeping. When awake, it has surprising strength and a calm nature.",
     },
-    powers: { he: ["מנוחה", "חבטת גוף", "נחירה"], en: ["Rest", "Body Slam", "Snore"] },
+    powers: { he: ["מנוחה", "חבטת גוף", "נחירה", "קרן על", "נשיכת מחץ", "חבטה כבדה"], en: ["Rest", "Body Slam", "Snore", "Hyper Beam", "Crunch", "Heavy Slam"] },
     types: ["normal"],
-    height: "2.1 m",
-    weight: "460.0 kg",
     chain: ["munchlax", "snorlax"],
   },
 ];
@@ -519,8 +449,6 @@ const ui = {
     about: "מי אני?",
     powers: "הכוחות שלי",
     evolution: "מסלול ההתפתחות",
-    height: "גובה",
-    weight: "משקל",
     empty: "אופס! עוד לא מצאנו פוקימון כזה.",
     emptyHelp: "נסו שם אחר או בחרו סוג חדש.",
     language: "English",
@@ -538,8 +466,6 @@ const ui = {
     about: "Meet me",
     powers: "My main powers",
     evolution: "Evolution journey",
-    height: "Height",
-    weight: "Weight",
     empty: "Oops! We couldn’t find that Pokémon.",
     emptyHelp: "Try another name or choose a new type.",
     language: "עברית",
@@ -660,18 +586,6 @@ export default function Home() {
             <div className="about-block">
               <h3><span aria-hidden="true">👋</span>{t.about}</h3>
               <p>{selected.description[language]}</p>
-            </div>
-
-            <div className="quick-facts">
-              <div>
-                <span>{t.height}</span>
-                <strong>{selected.height}</strong>
-              </div>
-              <div className="fact-divider" />
-              <div>
-                <span>{t.weight}</span>
-                <strong>{selected.weight}</strong>
-              </div>
             </div>
 
             <div className="powers-block">
