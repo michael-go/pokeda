@@ -540,6 +540,87 @@ function Pokeball({ small = false }: { small?: boolean }) {
   return <span className={`pokeball ${small ? "pokeball--small" : ""}`} aria-hidden="true" />;
 }
 
+function ProgressivePokemonImage({
+  id,
+  alt,
+  width,
+  height,
+}: {
+  id: number;
+  alt: string;
+  width: number;
+  height: number;
+}) {
+  const imageRef = useRef<HTMLImageElement | null>(null);
+  const [showArtwork, setShowArtwork] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    let loadTimer: number | undefined;
+    let observer: IntersectionObserver | undefined;
+    let artwork: HTMLImageElement | undefined;
+
+    const preloadArtwork = () => {
+      artwork = new Image();
+      artwork.decoding = "async";
+      artwork.fetchPriority = "low";
+      artwork.onload = () => {
+        const reveal = () => {
+          if (active) {
+            setShowArtwork(true);
+          }
+        };
+
+        void artwork?.decode().catch(() => undefined).then(reveal);
+      };
+      artwork.src = artUrl(id);
+    };
+
+    const scheduleArtwork = () => {
+      loadTimer = window.setTimeout(preloadArtwork, 450);
+    };
+
+    if (imageRef.current && "IntersectionObserver" in window) {
+      observer = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) {
+            observer?.disconnect();
+            scheduleArtwork();
+          }
+        },
+        { rootMargin: "180px" },
+      );
+      observer.observe(imageRef.current);
+    } else {
+      scheduleArtwork();
+    }
+
+    return () => {
+      active = false;
+      observer?.disconnect();
+      if (loadTimer !== undefined) {
+        window.clearTimeout(loadTimer);
+      }
+      if (artwork) {
+        artwork.onload = null;
+      }
+    };
+  }, [id]);
+
+  return (
+    <img
+      ref={imageRef}
+      className={`progressive-pokemon-image ${showArtwork ? "is-enhanced" : ""}`}
+      src={showArtwork ? artUrl(id) : spriteUrl(id)}
+      alt={alt}
+      width={width}
+      height={height}
+      loading="lazy"
+      decoding="async"
+    />
+  );
+}
+
 export default function Home() {
   const [language, setLanguage] = useState<Language>("he");
   const [selectedSlug, setSelectedSlug] = useState("pikachu");
@@ -854,7 +935,7 @@ export default function Home() {
                       aria-label={`${t.tap}: ${item.name[language]}`}
                     >
                       <span className="evolution-image">
-                        <img src={spriteUrl(item.id)} alt="" width={86} height={86} loading="lazy" />
+                        <ProgressivePokemonImage id={item.id} alt="" width={86} height={86} />
                       </span>
                       <strong>{item.name[language]}</strong>
                       <small>#{String(item.id).padStart(3, "0")}</small>
@@ -943,7 +1024,7 @@ export default function Home() {
                       </span>
                     ) : null}
                     <span className="tile-art">
-                      <img src={spriteUrl(item.id)} alt="" width={118} height={118} loading="lazy" />
+                      <ProgressivePokemonImage id={item.id} alt="" width={118} height={118} />
                     </span>
                     <strong>{item.name[language]}</strong>
                     <small>{typeNames[item.types[0]][language]}</small>
