@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { morePokemon, type Pokemon, type PokemonType } from "./more-pokemon";
 
 type Language = "he" | "en";
@@ -455,6 +455,9 @@ const ui = {
     language: "English",
     tap: "לחצו כדי להכיר",
     branchNote: "לאיווי יש כמה אפשרויות התפתחות!",
+    sound: "איך אני נשמע?",
+    stopSound: "עצרו את הצליל",
+    soundError: "אופס, הצליל לא זמין כרגע.",
   },
   en: {
     title: "פוקדע",
@@ -472,6 +475,9 @@ const ui = {
     language: "עברית",
     tap: "Tap to meet",
     branchNote: "Eevee has several evolution choices!",
+    sound: "Hear my sound",
+    stopSound: "Stop sound",
+    soundError: "Oops, this sound is unavailable right now.",
   },
 } as const;
 
@@ -500,6 +506,9 @@ const filters: Array<PokemonType | "all"> = [
 const artUrl = (id: number) =>
   `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`;
 
+const cryUrl = (id: number) =>
+  `https://raw.githubusercontent.com/PokeAPI/cries/main/cries/pokemon/latest/${id}.ogg`;
+
 function Pokeball({ small = false }: { small?: boolean }) {
   return <span className={`pokeball ${small ? "pokeball--small" : ""}`} aria-hidden="true" />;
 }
@@ -509,6 +518,9 @@ export default function Home() {
   const [selectedSlug, setSelectedSlug] = useState("pikachu");
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<PokemonType | "all">("all");
+  const [playingSlug, setPlayingSlug] = useState<string | null>(null);
+  const [soundError, setSoundError] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
   const t = ui[language];
   const selected = pokemon.find((item) => item.slug === selectedSlug) ?? pokemon[0];
   const direction = language === "he" ? "rtl" : "ltr";
@@ -530,7 +542,55 @@ export default function Home() {
     .map((slug) => pokemon.find((item) => item.slug === slug))
     .filter((item): item is Pokemon => Boolean(item));
 
+  useEffect(() => {
+    return () => audioRef.current?.pause();
+  }, []);
+
+  const stopSound = () => {
+    if (audioRef.current) {
+      audioRef.current.onplay = null;
+      audioRef.current.onended = null;
+      audioRef.current.onerror = null;
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+      audioRef.current = null;
+    }
+    setPlayingSlug(null);
+  };
+
+  const playSound = () => {
+    if (playingSlug === selected.slug) {
+      stopSound();
+      return;
+    }
+
+    stopSound();
+    setSoundError(false);
+
+    const audio = new Audio(cryUrl(selected.id));
+    audio.preload = "none";
+    audio.volume = 0.65;
+    audioRef.current = audio;
+    audio.onplay = () => setPlayingSlug(selected.slug);
+    audio.onended = () => {
+      audioRef.current = null;
+      setPlayingSlug(null);
+    };
+    audio.onerror = () => {
+      audioRef.current = null;
+      setPlayingSlug(null);
+      setSoundError(true);
+    };
+    void audio.play().catch(() => {
+      audioRef.current = null;
+      setPlayingSlug(null);
+      setSoundError(true);
+    });
+  };
+
   const choosePokemon = (slug: string) => {
+    stopSound();
+    setSoundError(false);
     setSelectedSlug(slug);
     if (window.innerWidth < 850) {
       requestAnimationFrame(() => document.querySelector(".detail-card")?.scrollIntoView({ behavior: "smooth", block: "start" }));
@@ -601,7 +661,19 @@ export default function Home() {
                 <h2>{selected.name[language]}</h2>
                 <span className="english-name">{selected.name.en}</span>
               </div>
-              <Pokeball small />
+              <div className="profile-actions">
+                <button
+                  className={`sound-button ${playingSlug === selected.slug ? "is-playing" : ""}`}
+                  type="button"
+                  onClick={playSound}
+                  aria-pressed={playingSlug === selected.slug}
+                >
+                  <span aria-hidden="true">{playingSlug === selected.slug ? "■" : "🔊"}</span>
+                  {playingSlug === selected.slug ? t.stopSound : t.sound}
+                </button>
+                <Pokeball small />
+                {soundError ? <small className="sound-error" role="status">{t.soundError}</small> : null}
+              </div>
             </div>
 
             <div className="about-block">

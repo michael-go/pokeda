@@ -353,6 +353,62 @@ button {
   letter-spacing: -.045em;
 }
 
+.profile-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 9px;
+  max-width: 190px;
+}
+
+[dir="rtl"] .profile-actions {
+  justify-content: flex-start;
+}
+
+.sound-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 40px;
+  padding: 8px 12px;
+  border: 1px solid color-mix(in srgb, var(--hero-deep) 45%, white);
+  border-radius: 13px;
+  background: color-mix(in srgb, var(--hero) 68%, white);
+  color: #34435a;
+  font-size: 11px;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 0 5px 14px rgba(34, 54, 95, .08);
+  transition: transform .2s ease, box-shadow .2s ease, background .2s ease;
+}
+
+.sound-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(34, 54, 95, .13);
+}
+
+.sound-button.is-playing {
+  background: var(--hero-deep);
+  color: #202c3e;
+  animation: sound-pulse 1s ease-in-out infinite;
+}
+
+.sound-button span {
+  min-width: 16px;
+  font-size: 14px;
+}
+
+.sound-error {
+  flex-basis: 100%;
+  color: #b34b4b;
+  font-family: "Segoe UI", Arial, sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  text-align: end;
+}
+
 .english-name {
   display: block;
   margin-top: 7px;
@@ -877,6 +933,10 @@ button {
 
 @keyframes slow-spin {
   to { transform: rotate(360deg); }
+}
+
+@keyframes sound-pulse {
+  50% { transform: scale(1.035); }
 }
 
 @media (max-width: 1180px) {
