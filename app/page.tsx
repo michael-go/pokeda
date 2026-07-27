@@ -1,32 +1,32 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { morePokemon, type Pokemon, type PokemonType } from "./more-pokemon";
 
 type Language = "he" | "en";
-type PokemonType = "grass" | "fire" | "water" | "electric" | "normal" | "flying" | "poison" | "bug";
-
-type Pokemon = {
-  id: number;
-  slug: string;
-  name: { he: string; en: string };
-  description: { he: string; en: string };
-  powers: { he: string[]; en: string[] };
-  types: PokemonType[];
-  chain: string[];
-};
 
 const typeNames: Record<PokemonType, { he: string; en: string }> = {
-  grass: { he: "עשב", en: "Grass" },
+  normal: { he: "רגיל", en: "Normal" },
   fire: { he: "אש", en: "Fire" },
   water: { he: "מים", en: "Water" },
   electric: { he: "חשמל", en: "Electric" },
-  normal: { he: "רגיל", en: "Normal" },
-  flying: { he: "מעופף", en: "Flying" },
+  grass: { he: "עשב", en: "Grass" },
+  ice: { he: "קרח", en: "Ice" },
+  fighting: { he: "לחימה", en: "Fighting" },
   poison: { he: "רעל", en: "Poison" },
+  ground: { he: "אדמה", en: "Ground" },
+  flying: { he: "מעופף", en: "Flying" },
+  psychic: { he: "על־חושי", en: "Psychic" },
   bug: { he: "חרק", en: "Bug" },
+  rock: { he: "סלע", en: "Rock" },
+  ghost: { he: "רוח", en: "Ghost" },
+  dragon: { he: "דרקון", en: "Dragon" },
+  dark: { he: "אופל", en: "Dark" },
+  steel: { he: "פלדה", en: "Steel" },
+  fairy: { he: "פיה", en: "Fairy" },
 };
 
-const pokemon: Pokemon[] = [
+export const pokemon: Pokemon[] = [
   {
     id: 1,
     slug: "bulbasaur",
@@ -181,7 +181,7 @@ const pokemon: Pokemon[] = [
     },
     powers: { he: ["מתקפה מהירה", "נשיכה", "עיניים מתוקות", "כוכבים מהירים", "מתקפה כפולת־קצה"], en: ["Quick Attack", "Bite", "Baby-Doll Eyes", "Swift", "Double-Edge"] },
     types: ["normal"],
-    chain: ["eevee", "vaporeon", "jolteon", "flareon"],
+    chain: ["eevee", "vaporeon", "jolteon", "flareon", "espeon", "umbreon", "leafeon", "glaceon", "sylveon"],
   },
   {
     id: 134,
@@ -193,7 +193,7 @@ const pokemon: Pokemon[] = [
     },
     powers: { he: ["פעימת מים", "גלישה", "קרן קפואה", "הידרו פאמפ", "טבעת מים"], en: ["Water Pulse", "Surf", "Aurora Beam", "Hydro Pump", "Aqua Ring"] },
     types: ["water"],
-    chain: ["eevee", "vaporeon", "jolteon", "flareon"],
+    chain: ["eevee", "vaporeon", "jolteon", "flareon", "espeon", "umbreon", "leafeon", "glaceon", "sylveon"],
   },
   {
     id: 135,
@@ -205,7 +205,7 @@ const pokemon: Pokemon[] = [
     },
     powers: { he: ["מכת ברק", "כדור חשמלי", "זריזות", "טילי סיכה", "גל רעם"], en: ["Thunderbolt", "Electro Ball", "Agility", "Pin Missile", "Thunder Wave"] },
     types: ["electric"],
-    chain: ["eevee", "vaporeon", "jolteon", "flareon"],
+    chain: ["eevee", "vaporeon", "jolteon", "flareon", "espeon", "umbreon", "leafeon", "glaceon", "sylveon"],
   },
   {
     id: 136,
@@ -217,7 +217,7 @@ const pokemon: Pokemon[] = [
     },
     powers: { he: ["ניב אש", "להביור", "זנב ברזל", "סחרור אש", "הסתערות אש"], en: ["Fire Fang", "Flamethrower", "Iron Tail", "Fire Spin", "Flare Blitz"] },
     types: ["fire"],
-    chain: ["eevee", "vaporeon", "jolteon", "flareon"],
+    chain: ["eevee", "vaporeon", "jolteon", "flareon", "espeon", "umbreon", "leafeon", "glaceon", "sylveon"],
   },
   {
     id: 10,
@@ -435,6 +435,7 @@ const pokemon: Pokemon[] = [
     types: ["normal"],
     chain: ["munchlax", "snorlax"],
   },
+  ...morePokemon,
 ];
 
 const ui = {
@@ -474,7 +475,27 @@ const ui = {
   },
 } as const;
 
-const filters: Array<PokemonType | "all"> = ["all", "fire", "water", "grass", "electric", "normal", "bug"];
+const filters: Array<PokemonType | "all"> = [
+  "all",
+  "fire",
+  "water",
+  "grass",
+  "electric",
+  "psychic",
+  "fighting",
+  "dragon",
+  "fairy",
+  "ghost",
+  "dark",
+  "ice",
+  "ground",
+  "rock",
+  "steel",
+  "flying",
+  "poison",
+  "bug",
+  "normal",
+];
 
 const artUrl = (id: number) =>
   `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`;

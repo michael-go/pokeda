@@ -55,6 +55,18 @@ button {
 .type-bg--electric { --hero: #fff0a9; --hero-deep: #ffd13d; }
 .type-bg--normal { --hero: #f4e9dc; --hero-deep: #d9aa7b; }
 .type-bg--bug { --hero: #e7f3c9; --hero-deep: #a8ce60; }
+.type-bg--ice { --hero: #dff7f6; --hero-deep: #78d7d1; }
+.type-bg--fighting { --hero: #f7ded8; --hero-deep: #d97c68; }
+.type-bg--poison { --hero: #f0def6; --hero-deep: #b67ac8; }
+.type-bg--ground { --hero: #f5e5c9; --hero-deep: #d6a85f; }
+.type-bg--flying { --hero: #e5e9fb; --hero-deep: #94a8e6; }
+.type-bg--psychic { --hero: #fde0e9; --hero-deep: #ee82a5; }
+.type-bg--rock { --hero: #eee6c8; --hero-deep: #b9a35b; }
+.type-bg--ghost { --hero: #e7e1f3; --hero-deep: #8874b0; }
+.type-bg--dragon { --hero: #e0ddf8; --hero-deep: #7867d8; }
+.type-bg--dark { --hero: #e6e1df; --hero-deep: #786961; }
+.type-bg--steel { --hero: #e7edf0; --hero-deep: #91a7b2; }
+.type-bg--fairy { --hero: #fde5f1; --hero-deep: #e996bf; }
 
 .background-orb {
   position: absolute;
@@ -389,6 +401,16 @@ button {
 .type-chip--poison { color: #9a55af; background: #f8ecfc; }
 .type-chip--flying { color: #607db4; background: #edf3ff; }
 .type-chip--bug { color: #718f24; background: #f1f7df; }
+.type-chip--ice { color: #378f91; background: #e8fafa; }
+.type-chip--fighting { color: #ae4f3b; background: #fbece8; }
+.type-chip--ground { color: #9a6a2d; background: #f8efd9; }
+.type-chip--psychic { color: #c34f78; background: #fdebf1; }
+.type-chip--rock { color: #82702e; background: #f3efd9; }
+.type-chip--ghost { color: #66518f; background: #f0ebf8; }
+.type-chip--dragon { color: #5a49bd; background: #ece9fc; }
+.type-chip--dark { color: #65564e; background: #eeeae8; }
+.type-chip--steel { color: #5e7782; background: #edf3f5; }
+.type-chip--fairy { color: #bd5d8d; background: #fdebf4; }
 
 .detail-content h3 {
   display: flex;
@@ -556,6 +578,14 @@ button {
   width: 72px;
 }
 
+.evolution-chain--branch {
+  justify-content: flex-start;
+  overflow-x: auto;
+  padding: 4px 2px 10px;
+  scrollbar-width: thin;
+  scrollbar-color: #d6deea transparent;
+}
+
 .evolution-chain--branch .evolution-image {
   width: 59px;
   height: 59px;
@@ -651,12 +681,15 @@ button {
 
 .filter-row {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: center;
   gap: 7px;
   margin: 16px 0 14px;
-  padding: 2px;
-  overflow: visible;
+  padding: 2px 2px 8px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: #d6deea transparent;
 }
 
 .filter-row button {
@@ -752,6 +785,18 @@ button {
 .pokemon-tile--electric { --tile-color: #f1c532; background: #fff9df; }
 .pokemon-tile--normal { --tile-color: #d4aa82; background: #faf2e9; }
 .pokemon-tile--bug { --tile-color: #9ec151; background: #f3f8e6; }
+.pokemon-tile--ice { --tile-color: #74cfcb; background: #ecfbfa; }
+.pokemon-tile--fighting { --tile-color: #d1735f; background: #fcefeb; }
+.pokemon-tile--poison { --tile-color: #ad6abe; background: #f8eefb; }
+.pokemon-tile--ground { --tile-color: #c99b52; background: #faf2e2; }
+.pokemon-tile--flying { --tile-color: #8fa4df; background: #f0f3fd; }
+.pokemon-tile--psychic { --tile-color: #e77b9f; background: #fdf0f4; }
+.pokemon-tile--rock { --tile-color: #ad9950; background: #f7f3e2; }
+.pokemon-tile--ghost { --tile-color: #806ba7; background: #f1eef8; }
+.pokemon-tile--dragon { --tile-color: #7461cf; background: #efedfc; }
+.pokemon-tile--dark { --tile-color: #73635b; background: #f0edeb; }
+.pokemon-tile--steel { --tile-color: #8da3ad; background: #eff4f6; }
+.pokemon-tile--fairy { --tile-color: #df8db5; background: #fdf0f6; }
 
 .tile-number {
   position: absolute;
