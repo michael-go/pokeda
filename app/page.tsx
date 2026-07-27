@@ -469,6 +469,7 @@ const ui = {
     soundError: "אופס, הצליל לא זמין כרגע.",
     opened: "כבר גילית את הפוקימון הזה",
     showMore: "עוד פוקימונים!",
+    moreLoaded: "נוספו עוד {count} פוקימונים!",
     loadingProfile: "טוענים את הפרטים...",
     profileError: "אופס, לא הצלחנו לטעון את הפרטים כרגע.",
   },
@@ -492,6 +493,7 @@ const ui = {
     soundError: "Oops, this sound is unavailable right now.",
     opened: "You already explored this Pokémon",
     showMore: "Show more Pokémon",
+    moreLoaded: "{count} more Pokémon added!",
     loadingProfile: "Loading this profile...",
     profileError: "Oops, we couldn’t load these details right now.",
   },
@@ -643,6 +645,10 @@ export default function Home() {
   const [soundError, setSoundError] = useState(false);
   const [openedSlugs, setOpenedSlugs] = useState<string[]>([]);
   const [visibleCount, setVisibleCount] = useState(pokemonBatchSize);
+  const [newPokemonBatch, setNewPokemonBatch] = useState<{
+    start: number;
+    count: number;
+  } | null>(null);
   const [catalog, setCatalog] = useState<PokemonCatalogEntry[]>(pokemon);
   const [detailsBySlug, setDetailsBySlug] =
     useState<Record<string, PokemonDetails>>(curatedDetails);
@@ -651,6 +657,8 @@ export default function Home() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const filterRowRef = useRef<HTMLDivElement | null>(null);
   const filterEndRef = useRef<HTMLButtonElement | null>(null);
+  const pokemonGridRef = useRef<HTMLDivElement | null>(null);
+  const firstNewPokemonRef = useRef<HTMLButtonElement | null>(null);
   const t = ui[language];
   const selected = catalog.find((item) => item.slug === selectedSlug) ?? catalog[0];
   const selectedDetails = detailsBySlug[selected.slug];
@@ -677,6 +685,30 @@ export default function Home() {
   useEffect(() => {
     return () => audioRef.current?.pause();
   }, []);
+
+  useEffect(() => {
+    if (!newPokemonBatch) {
+      return;
+    }
+
+    const grid = pokemonGridRef.current;
+    const firstNewPokemon = firstNewPokemonRef.current;
+
+    if (!grid || !firstNewPokemon) {
+      return;
+    }
+
+    const frame = window.requestAnimationFrame(() => {
+      grid.scrollTo({
+        top: Math.max(0, firstNewPokemon.offsetTop - 4),
+        behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+          ? "auto"
+          : "smooth",
+      });
+    });
+
+    return () => window.cancelAnimationFrame(frame);
+  }, [newPokemonBatch]);
 
   useEffect(() => {
     const row = filterRowRef.current;
@@ -855,6 +887,18 @@ export default function Home() {
     choosePokemon(next.slug);
   };
 
+  const showMorePokemon = () => {
+    const start = visiblePokemon.length;
+    const count = Math.min(pokemonBatchSize, filtered.length - start);
+
+    if (count <= 0) {
+      return;
+    }
+
+    setNewPokemonBatch({ start, count });
+    setVisibleCount(start + count);
+  };
+
   return (
     <main className={`app type-bg--${selected.types[0]}`} dir={direction}>
       <div className="background-orb background-orb--one" />
@@ -997,6 +1041,7 @@ export default function Home() {
                 onChange={(event) => {
                   setQuery(event.target.value);
                   setVisibleCount(pokemonBatchSize);
+                  setNewPokemonBatch(null);
                 }}
                 placeholder={t.search}
                 aria-label={t.search}
@@ -1007,6 +1052,7 @@ export default function Home() {
                   onClick={() => {
                     setQuery("");
                     setVisibleCount(pokemonBatchSize);
+                    setNewPokemonBatch(null);
                   }}
                   aria-label="Clear search"
                 >
@@ -1035,6 +1081,7 @@ export default function Home() {
                   onClick={() => {
                     setFilter(item);
                     setVisibleCount(pokemonBatchSize);
+                    setNewPokemonBatch(null);
                   }}
                 >
                   {item === "all" ? t.all : typeNames[item][language]}
@@ -1050,12 +1097,23 @@ export default function Home() {
 
           {filtered.length ? (
             <>
-              <div className="pokemon-grid">
-                {visiblePokemon.map((item) => (
+              <div ref={pokemonGridRef} className="pokemon-grid">
+                {visiblePokemon.map((item, index) => (
                   <button
+                    ref={
+                      newPokemonBatch?.start === index
+                        ? firstNewPokemonRef
+                        : undefined
+                    }
                     type="button"
                     key={item.slug}
-                    className={`pokemon-tile pokemon-tile--${item.types[0]} ${item.slug === selected.slug ? "is-selected" : ""}`}
+                    className={`pokemon-tile pokemon-tile--${item.types[0]} ${item.slug === selected.slug ? "is-selected" : ""} ${
+                      newPokemonBatch &&
+                      index >= newPokemonBatch.start &&
+                      index < newPokemonBatch.start + newPokemonBatch.count
+                        ? "is-newly-loaded"
+                        : ""
+                    }`}
                     onClick={() => choosePokemon(item.slug)}
                     aria-pressed={item.slug === selected.slug}
                   >
@@ -1078,11 +1136,17 @@ export default function Home() {
                   </button>
                 ))}
               </div>
+              {newPokemonBatch ? (
+                <div className="load-more-feedback" role="status" aria-live="polite">
+                  <span aria-hidden="true">✓</span>
+                  {t.moreLoaded.replace("{count}", String(newPokemonBatch.count))}
+                </div>
+              ) : null}
               {visiblePokemon.length < filtered.length ? (
                 <button
                   className="load-more-button"
                   type="button"
-                  onClick={() => setVisibleCount((count) => count + pokemonBatchSize)}
+                  onClick={showMorePokemon}
                 >
                   <span aria-hidden="true">✦</span>
                   {t.showMore}
