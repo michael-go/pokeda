@@ -576,22 +576,64 @@ button {
   border-radius: 8px;
 }
 
+.evolution-scroll-shell {
+  position: relative;
+  min-width: 0;
+  isolation: isolate;
+}
+
 .evolution-chain {
+  position: relative;
+  z-index: 1;
   display: flex;
   align-items: flex-start;
   justify-content: center;
   gap: 5px;
   margin-top: 2px;
   direction: ltr;
+  scroll-padding-inline: 8px;
+  scroll-snap-type: x proximity;
+  overscroll-behavior-inline: contain;
 }
 
 [dir="rtl"] .evolution-chain {
   direction: rtl;
 }
 
+.evolution-scroll-shell.has-more::after {
+  content: "›";
+  position: absolute;
+  z-index: 2;
+  inset-block: 2px 10px;
+  right: 0;
+  display: grid;
+  width: 48px;
+  place-items: center;
+  border-radius: 0 14px 14px 0;
+  background: linear-gradient(to right, rgba(255, 255, 255, 0), rgba(255, 255, 255, .98) 62%);
+  color: #315fd1;
+  font-size: 27px;
+  font-weight: 900;
+  line-height: 1;
+  direction: ltr;
+  unicode-bidi: isolate;
+  pointer-events: none;
+  animation: filter-more-hint 1.2s ease-in-out infinite;
+}
+
+[dir="rtl"] .evolution-scroll-shell.has-more::after {
+  content: "‹";
+  right: auto;
+  left: 0;
+  border-radius: 14px 0 0 14px;
+  background: linear-gradient(to left, rgba(255, 255, 255, 0), rgba(255, 255, 255, .98) 62%);
+}
+
 .evolution-step {
   display: flex;
+  flex: 0 0 auto;
   align-items: center;
+  scroll-snap-align: start;
 }
 
 .evolution-step button {

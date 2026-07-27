@@ -724,9 +724,12 @@ export default function Home() {
     useState<Record<string, PokemonDetails>>(curatedDetails);
   const [profileErrorSlug, setProfileErrorSlug] = useState<string | null>(null);
   const [showFilterScrollHint, setShowFilterScrollHint] = useState(false);
+  const [showEvolutionScrollHint, setShowEvolutionScrollHint] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const filterRowRef = useRef<HTMLDivElement | null>(null);
   const filterEndRef = useRef<HTMLButtonElement | null>(null);
+  const evolutionChainRef = useRef<HTMLDivElement | null>(null);
+  const evolutionEndRef = useRef<HTMLDivElement | null>(null);
   const pokemonGridRef = useRef<HTMLDivElement | null>(null);
   const firstNewPokemonRef = useRef<HTMLButtonElement | null>(null);
   const pokemonGridEndRef = useRef<HTMLDivElement | null>(null);
@@ -828,6 +831,27 @@ export default function Home() {
     observer.observe(finalFilter);
     return () => observer.disconnect();
   }, [language]);
+
+  useEffect(() => {
+    const row = evolutionChainRef.current;
+    const finalEvolution = evolutionEndRef.current;
+
+    setShowEvolutionScrollHint(false);
+
+    if (!row || !finalEvolution || !("IntersectionObserver" in window)) {
+      return;
+    }
+
+    row.scrollTo({ left: 0, behavior: "auto" });
+
+    const observer = new IntersectionObserver(
+      ([entry]) => setShowEvolutionScrollHint(!entry.isIntersecting),
+      { root: row, threshold: 0.96 },
+    );
+
+    observer.observe(finalEvolution);
+    return () => observer.disconnect();
+  }, [chain.length, language, selected.slug]);
 
   useEffect(() => {
     let cancelled = false;
@@ -1118,28 +1142,41 @@ export default function Home() {
                 <h3><span aria-hidden="true">✨</span>{t.evolution}</h3>
                 {selected.slug === "eevee" || selected.chain.includes("eevee") ? <small>{t.branchNote}</small> : null}
               </div>
-              <div className={`evolution-chain ${chain.length > 3 ? "evolution-chain--branch" : ""}`}>
-                {chain.map((item, index) => (
-                  <div className="evolution-step" key={item.slug}>
-                    <button
-                      type="button"
-                      className={item.slug === selected.slug ? "is-current" : ""}
-                      onClick={() => choosePokemon(item.slug)}
-                      aria-label={`${t.tap}: ${item.name[language]}`}
+              <div
+                className={`evolution-scroll-shell ${
+                  showEvolutionScrollHint ? "has-more" : ""
+                }`}
+              >
+                <div
+                  ref={evolutionChainRef}
+                  className={`evolution-chain ${chain.length > 3 ? "evolution-chain--branch" : ""}`}
+                >
+                  {chain.map((item, index) => (
+                    <div
+                      ref={index === chain.length - 1 ? evolutionEndRef : undefined}
+                      className="evolution-step"
+                      key={item.slug}
                     >
-                      <span className="evolution-image">
-                        <ProgressivePokemonImage id={item.id} alt="" width={86} height={86} />
-                      </span>
-                      <strong>{item.name[language]}</strong>
-                      <small>#{String(item.id).padStart(3, "0")}</small>
-                    </button>
-                    {index < chain.length - 1 && (
-                      <span className="evolution-arrow" aria-hidden="true">
-                        {language === "he" ? "‹" : "›"}
-                      </span>
-                    )}
-                  </div>
-                ))}
+                      <button
+                        type="button"
+                        className={item.slug === selected.slug ? "is-current" : ""}
+                        onClick={() => choosePokemon(item.slug)}
+                        aria-label={`${t.tap}: ${item.name[language]}`}
+                      >
+                        <span className="evolution-image">
+                          <ProgressivePokemonImage id={item.id} alt="" width={86} height={86} />
+                        </span>
+                        <strong>{item.name[language]}</strong>
+                        <small>#{String(item.id).padStart(3, "0")}</small>
+                      </button>
+                      {index < chain.length - 1 && (
+                        <span className="evolution-arrow" aria-hidden="true">
+                          {language === "he" ? "‹" : "›"}
+                        </span>
+                      )}
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
