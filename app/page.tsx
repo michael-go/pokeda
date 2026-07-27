@@ -442,7 +442,6 @@ const ui = {
   he: {
     title: "פוקדע",
     eyebrow: "הפוקדקס שלי",
-    tagline: "עולם של פוקימונים מחכה לך!",
     search: "חיפוש לפי שם...",
     all: "הכול",
     discover: "הפתעה!",
@@ -461,9 +460,8 @@ const ui = {
     opened: "כבר גילית את הפוקימון הזה",
   },
   en: {
-    title: "פוקדע",
+    title: "Pokeda",
     eyebrow: "My Pokédex",
-    tagline: "A world of Pokémon is waiting for you!",
     search: "Search by name...",
     all: "All",
     discover: "Surprise me!",
@@ -647,8 +645,6 @@ export default function Home() {
             <h1>{t.title}</h1>
           </div>
         </div>
-
-        <p className="tagline">{t.tagline}</p>
 
         <button
           className="language-switch"
