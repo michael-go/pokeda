@@ -876,6 +876,28 @@ button {
   inset: 9px 10px auto auto;
 }
 
+.tile-opened-indicator {
+  position: absolute;
+  z-index: 2;
+  inset: 8px 9px auto auto;
+  display: grid;
+  place-items: center;
+  width: 19px;
+  height: 19px;
+  border: 2px solid rgba(255, 255, 255, .92);
+  border-radius: 50%;
+  background: #315fd1;
+  color: white;
+  font-size: 10px;
+  font-weight: 900;
+  line-height: 1;
+  box-shadow: 0 3px 8px rgba(40, 67, 132, .22);
+}
+
+[dir="rtl"] .tile-opened-indicator {
+  inset: 8px auto auto 9px;
+}
+
 .tile-art {
   display: grid;
   place-items: center;

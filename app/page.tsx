@@ -458,6 +458,7 @@ const ui = {
     sound: "איך אני נשמע?",
     stopSound: "עצרו את הצליל",
     soundError: "אופס, הצליל לא זמין כרגע.",
+    opened: "כבר גילית את הפוקימון הזה",
   },
   en: {
     title: "פוקדע",
@@ -478,8 +479,11 @@ const ui = {
     sound: "Hear my sound",
     stopSound: "Stop sound",
     soundError: "Oops, this sound is unavailable right now.",
+    opened: "You already explored this Pokémon",
   },
 } as const;
+
+const openedPokemonStorageKey = "pokeda.openedPokemon.v1";
 
 const filters: Array<PokemonType | "all"> = [
   "all",
@@ -520,6 +524,7 @@ export default function Home() {
   const [filter, setFilter] = useState<PokemonType | "all">("all");
   const [playingSlug, setPlayingSlug] = useState<string | null>(null);
   const [soundError, setSoundError] = useState(false);
+  const [openedSlugs, setOpenedSlugs] = useState<string[]>([]);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const t = ui[language];
   const selected = pokemon.find((item) => item.slug === selectedSlug) ?? pokemon[0];
@@ -545,6 +550,32 @@ export default function Home() {
   useEffect(() => {
     return () => audioRef.current?.pause();
   }, []);
+
+  useEffect(() => {
+    let savedSlugs: string[] = [];
+
+    try {
+      const savedValue: unknown = JSON.parse(window.localStorage.getItem(openedPokemonStorageKey) ?? "[]");
+      if (Array.isArray(savedValue)) {
+        savedSlugs = savedValue.filter(
+          (slug): slug is string =>
+            typeof slug === "string" && pokemon.some((item) => item.slug === slug),
+        );
+      }
+    } catch {
+      savedSlugs = [];
+    }
+
+    setOpenedSlugs((current) => {
+      const next = [...new Set([...savedSlugs, ...current, selectedSlug])];
+      try {
+        window.localStorage.setItem(openedPokemonStorageKey, JSON.stringify(next));
+      } catch {
+        // Progress still works for this visit when browser storage is unavailable.
+      }
+      return next;
+    });
+  }, [selectedSlug]);
 
   const stopSound = () => {
     if (audioRef.current) {
@@ -771,6 +802,16 @@ export default function Home() {
                   aria-pressed={item.slug === selected.slug}
                 >
                   <span className="tile-number">#{String(item.id).padStart(3, "0")}</span>
+                  {openedSlugs.includes(item.slug) ? (
+                    <span
+                      className="tile-opened-indicator"
+                      role="img"
+                      aria-label={t.opened}
+                      title={t.opened}
+                    >
+                      ✓
+                    </span>
+                  ) : null}
                   <span className="tile-art">
                     <img src={artUrl(item.id)} alt="" width={118} height={118} loading="lazy" />
                   </span>
