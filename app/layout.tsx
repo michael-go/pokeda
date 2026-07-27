@@ -3,20 +3,20 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "פוקדע",
-  description: "פוקדקס צבעוני ומהנה לילדים.",
+  description: "Friendly Pokedex",
   icons: {
     icon: [{ url: "/favicon.png", type: "image/png", sizes: "64x64" }],
     apple: [{ url: "/apple-touch-icon.png", type: "image/png", sizes: "180x180" }],
   },
   openGraph: {
     title: "פוקדע",
-    description: "פוקדקס צבעוני ומהנה לילדים.",
+    description: "Friendly Pokedex",
     type: "website",
   },
   twitter: {
     card: "summary",
     title: "פוקדע",
-    description: "פוקדקס צבעוני ומהנה לילדים.",
+    description: "Friendly Pokedex",
   },
 };
 

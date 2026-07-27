@@ -1,1 +1,5 @@
-vibe-coded Pokedex for kids
+# Friendly Pokedex
+
+https://pokeda.vercel.app
+
+fully vibe-coded
