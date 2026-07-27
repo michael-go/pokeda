@@ -562,13 +562,82 @@ function ProgressivePokemonImage({
   artworkDelay?: number;
 }) {
   const imageRef = useRef<HTMLImageElement | null>(null);
+  const [nearbyImageId, setNearbyImageId] = useState<number | null>(
+    loading === "eager" ? id : null,
+  );
+  const [priorityImageId, setPriorityImageId] = useState<number | null>(
+    loading === "eager" ? id : null,
+  );
+  const [readySpriteId, setReadySpriteId] = useState<number | null>(null);
   const [loadedArtworkId, setLoadedArtworkId] = useState<number | null>(null);
+  const isNearViewport = loading === "eager" || nearbyImageId === id;
+  const isViewportPriority = loading === "eager" || priorityImageId === id;
   const showArtwork = loadedArtworkId === id;
 
   useEffect(() => {
+    const image = imageRef.current;
+
+    if (loading === "eager") {
+      return;
+    }
+
+    if (!image || !("IntersectionObserver" in window)) {
+      setNearbyImageId(id);
+      setPriorityImageId(id);
+      return;
+    }
+
+    const scrollRoot = image.closest(".pokemon-grid");
+    const markSpriteReadyIfComplete = () => {
+      if (image.complete) {
+        setReadySpriteId(id);
+      }
+    };
+    const nearbyObserver = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setNearbyImageId(id);
+          markSpriteReadyIfComplete();
+          nearbyObserver.disconnect();
+        }
+      },
+      {
+        root: scrollRoot,
+        rootMargin: scrollRoot ? "420px 0px" : "320px 0px",
+        threshold: 0.01,
+      },
+    );
+    const visibleObserver = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setNearbyImageId(id);
+          setPriorityImageId(id);
+          markSpriteReadyIfComplete();
+          visibleObserver.disconnect();
+        }
+      },
+      { root: scrollRoot, threshold: 0.01 },
+    );
+
+    nearbyObserver.observe(image);
+    visibleObserver.observe(image);
+
+    return () => {
+      nearbyObserver.disconnect();
+      visibleObserver.disconnect();
+    };
+  }, [id, loading]);
+
+  useEffect(() => {
+    if (
+      !isNearViewport ||
+      (loading !== "eager" && readySpriteId !== id)
+    ) {
+      return;
+    }
+
     let active = true;
     let loadTimer: number | undefined;
-    let observer: IntersectionObserver | undefined;
     let artwork: HTMLImageElement | undefined;
 
     const preloadArtwork = () => {
@@ -596,24 +665,10 @@ function ProgressivePokemonImage({
       loadTimer = window.setTimeout(preloadArtwork, artworkDelay);
     };
 
-    if (imageRef.current && "IntersectionObserver" in window) {
-      observer = new IntersectionObserver(
-        ([entry]) => {
-          if (entry.isIntersecting) {
-            observer?.disconnect();
-            scheduleArtwork();
-          }
-        },
-        { rootMargin: "180px" },
-      );
-      observer.observe(imageRef.current);
-    } else {
-      scheduleArtwork();
-    }
+    scheduleArtwork();
 
     return () => {
       active = false;
-      observer?.disconnect();
       if (loadTimer !== undefined) {
         window.clearTimeout(loadTimer);
       }
@@ -621,7 +676,7 @@ function ProgressivePokemonImage({
         artwork.onload = null;
       }
     };
-  }, [artworkDelay, id, loading]);
+  }, [artworkDelay, id, isNearViewport, loading, readySpriteId]);
 
   return (
     <img
@@ -632,8 +687,21 @@ function ProgressivePokemonImage({
       alt={alt}
       width={width}
       height={height}
-      loading={loading}
+      loading={isNearViewport ? "eager" : loading}
+      fetchPriority={
+        isViewportPriority ? "high" : isNearViewport ? "auto" : "low"
+      }
       decoding="async"
+      onLoad={() => {
+        if (!showArtwork) {
+          setReadySpriteId(id);
+        }
+      }}
+      onError={() => {
+        if (!showArtwork) {
+          setReadySpriteId(id);
+        }
+      }}
     />
   );
 }
