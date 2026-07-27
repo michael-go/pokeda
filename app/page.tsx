@@ -626,7 +626,7 @@ export default function Home() {
           aria-label={language === "he" ? "Switch to English" : "מעבר לעברית"}
         >
           <span aria-hidden="true">🌐</span>
-          {t.language}
+          <span className="language-code">{language === "he" ? "EN" : "עב"}</span>
         </button>
       </header>
 
@@ -667,9 +667,10 @@ export default function Home() {
                   type="button"
                   onClick={playSound}
                   aria-pressed={playingSlug === selected.slug}
+                  aria-label={playingSlug === selected.slug ? t.stopSound : t.sound}
+                  title={playingSlug === selected.slug ? t.stopSound : t.sound}
                 >
-                  <span aria-hidden="true">{playingSlug === selected.slug ? "■" : "🔊"}</span>
-                  {playingSlug === selected.slug ? t.stopSound : t.sound}
+                  <span aria-hidden="true">🔊</span>
                 </button>
                 <Pokeball small />
                 {soundError ? <small className="sound-error" role="status">{t.soundError}</small> : null}
