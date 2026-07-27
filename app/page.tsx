@@ -468,7 +468,7 @@ const ui = {
     stopSound: "עצרו את הצליל",
     soundError: "אופס, הצליל לא זמין כרגע.",
     opened: "כבר גילית את הפוקימון הזה",
-    showMore: "עוד פוקימונים!",
+    loadingMore: "טוענים עוד פוקימונים...",
     moreLoaded: "נוספו עוד {count} פוקימונים!",
     loadingProfile: "טוענים את הפרטים...",
     profileError: "אופס, לא הצלחנו לטעון את הפרטים כרגע.",
@@ -492,7 +492,7 @@ const ui = {
     stopSound: "Stop sound",
     soundError: "Oops, this sound is unavailable right now.",
     opened: "You already explored this Pokémon",
-    showMore: "Show more Pokémon",
+    loadingMore: "Loading more Pokémon...",
     moreLoaded: "{count} more Pokémon added!",
     loadingProfile: "Loading this profile...",
     profileError: "Oops, we couldn’t load these details right now.",
@@ -659,6 +659,7 @@ export default function Home() {
   const filterEndRef = useRef<HTMLButtonElement | null>(null);
   const pokemonGridRef = useRef<HTMLDivElement | null>(null);
   const firstNewPokemonRef = useRef<HTMLButtonElement | null>(null);
+  const pokemonGridEndRef = useRef<HTMLDivElement | null>(null);
   const t = ui[language];
   const selected = catalog.find((item) => item.slug === selectedSlug) ?? catalog[0];
   const selectedDetails = detailsBySlug[selected.slug];
@@ -709,6 +710,37 @@ export default function Home() {
 
     return () => window.cancelAnimationFrame(frame);
   }, [newPokemonBatch]);
+
+  useEffect(() => {
+    const grid = pokemonGridRef.current;
+    const gridEnd = pokemonGridEndRef.current;
+    const start = visiblePokemon.length;
+    const count = Math.min(pokemonBatchSize, filtered.length - start);
+
+    if (!grid || !gridEnd || count <= 0) {
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) {
+          return;
+        }
+
+        observer.disconnect();
+        setNewPokemonBatch({ start, count });
+        setVisibleCount(start + count);
+      },
+      {
+        root: grid,
+        rootMargin: "0px 0px 100px 0px",
+        threshold: 0.01,
+      },
+    );
+
+    observer.observe(gridEnd);
+    return () => observer.disconnect();
+  }, [filtered.length, visiblePokemon.length]);
 
   useEffect(() => {
     const row = filterRowRef.current;
@@ -885,18 +917,6 @@ export default function Home() {
     const pool = filtered.length ? filtered : catalog;
     const next = pool[Math.floor(Math.random() * pool.length)];
     choosePokemon(next.slug);
-  };
-
-  const showMorePokemon = () => {
-    const start = visiblePokemon.length;
-    const count = Math.min(pokemonBatchSize, filtered.length - start);
-
-    if (count <= 0) {
-      return;
-    }
-
-    setNewPokemonBatch({ start, count });
-    setVisibleCount(start + count);
   };
 
   return (
@@ -1135,23 +1155,23 @@ export default function Home() {
                     <small>{typeNames[item.types[0]][language]}</small>
                   </button>
                 ))}
+                {visiblePokemon.length < filtered.length ? (
+                  <div
+                    ref={pokemonGridEndRef}
+                    className="infinite-scroll-sentinel"
+                    role="status"
+                    aria-live="polite"
+                  >
+                    <Pokeball small />
+                    <span>{t.loadingMore}</span>
+                  </div>
+                ) : null}
               </div>
               {newPokemonBatch ? (
                 <div className="load-more-feedback" role="status" aria-live="polite">
                   <span aria-hidden="true">✓</span>
                   {t.moreLoaded.replace("{count}", String(newPokemonBatch.count))}
                 </div>
-              ) : null}
-              {visiblePokemon.length < filtered.length ? (
-                <button
-                  className="load-more-button"
-                  type="button"
-                  onClick={showMorePokemon}
-                >
-                  <span aria-hidden="true">✦</span>
-                  {t.showMore}
-                  <small>+{Math.min(pokemonBatchSize, filtered.length - visiblePokemon.length)}</small>
-                </button>
               ) : null}
             </>
           ) : (
