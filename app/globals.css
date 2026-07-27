@@ -876,14 +876,14 @@ button {
   place-items: center;
   width: 15px;
   height: 15px;
-  border: 1.5px solid rgba(255, 255, 255, .88);
+  border: 1px solid rgba(255, 255, 255, .92);
   border-radius: 50%;
-  background: #6f8ed8;
-  color: white;
+  background: #e3e6eb;
+  color: #747b87;
   font-size: 8px;
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1;
-  box-shadow: 0 1px 4px rgba(40, 67, 132, .14);
+  box-shadow: 0 1px 3px rgba(41, 49, 63, .1);
 }
 
 [dir="rtl"] .tile-opened-indicator {
