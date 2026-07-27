@@ -12,6 +12,7 @@ Drizzle support.
 
 ```bash
 npm install
+npm run pokemon:sync
 npm run dev
 npm run build
 ```
@@ -89,8 +90,18 @@ actions tied to the current ChatGPT user. Leave public content anonymous.
 
 - `npm run dev`: start local development
 - `npm run build`: verify the vinext build output
+- `npm run pokemon:sync`: refresh the generated Pokémon catalog from PokéAPI
 - `npm test`: build the starter and verify its rendered loading skeleton
 - `npm run db:generate`: generate Drizzle migrations after schema changes
+
+## Pokémon Data
+
+`npm run pokemon:sync` downloads and caches PokéAPI species data, then combines
+it with the reviewed Hebrew files under `translations/he/`. It writes a compact
+catalog plus small on-demand detail files under `public/pokemon-data/`.
+
+Use `npm run pokemon:sync -- --refresh` when the upstream API should be fetched
+again instead of reusing the local cache.
 
 ## Learn More
 

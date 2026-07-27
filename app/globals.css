@@ -511,6 +511,18 @@ button {
   box-shadow: 0 5px 13px rgba(34, 54, 95, .045);
 }
 
+.about-block p.profile-loading,
+.power-list > span.profile-loading {
+  color: #8b96a7;
+  font-weight: 600;
+}
+
+.power-list > span.profile-loading {
+  grid-column: 1 / -1;
+  justify-content: center;
+  background: #f7f9fc;
+}
+
 .power-list i {
   display: grid;
   place-items: center;
@@ -795,6 +807,33 @@ button {
   padding: 3px 3px 12px;
   scrollbar-width: thin;
   scrollbar-color: #d6deea transparent;
+}
+
+.load-more-button {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 38px;
+  margin-top: 10px;
+  border: 1px solid #dfe6f2;
+  border-radius: 13px;
+  background: #f6f8fc;
+  color: #53647d;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.load-more-button:hover {
+  border-color: #b8c8e6;
+  background: #eef3fb;
+}
+
+.load-more-button small {
+  color: #8a96a8;
+  font-size: 10px;
 }
 
 .pokemon-tile {

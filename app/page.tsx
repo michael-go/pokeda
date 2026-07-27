@@ -4,6 +4,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { morePokemon, type Pokemon, type PokemonType } from "./more-pokemon";
 
 type Language = "he" | "en";
+type PokemonCatalogEntry = Pick<Pokemon, "id" | "slug" | "name" | "types" | "chain">;
+type PokemonDetails = Pick<Pokemon, "description" | "powers">;
 
 const typeNames: Record<PokemonType, { he: string; en: string }> = {
   normal: { he: "רגיל", en: "Normal" },
@@ -26,7 +28,7 @@ const typeNames: Record<PokemonType, { he: string; en: string }> = {
   fairy: { he: "פיה", en: "Fairy" },
 };
 
-export const pokemon: Pokemon[] = [
+const curatedPokemon: Pokemon[] = [
   {
     id: 1,
     slug: "bulbasaur",
@@ -438,6 +440,14 @@ export const pokemon: Pokemon[] = [
   ...morePokemon,
 ];
 
+export const pokemon = curatedPokemon;
+const curatedDetails: Record<string, PokemonDetails> = Object.fromEntries(
+  pokemon.map((item) => [
+    item.slug,
+    { description: item.description, powers: item.powers },
+  ]),
+);
+
 const ui = {
   he: {
     title: "פוקדע",
@@ -458,6 +468,9 @@ const ui = {
     stopSound: "עצרו את הצליל",
     soundError: "אופס, הצליל לא זמין כרגע.",
     opened: "כבר גילית את הפוקימון הזה",
+    showMore: "עוד פוקימונים!",
+    loadingProfile: "טוענים את הפרטים...",
+    profileError: "אופס, לא הצלחנו לטעון את הפרטים כרגע.",
   },
   en: {
     title: "Pokeda",
@@ -478,10 +491,14 @@ const ui = {
     stopSound: "Stop sound",
     soundError: "Oops, this sound is unavailable right now.",
     opened: "You already explored this Pokémon",
+    showMore: "Show more Pokémon",
+    loadingProfile: "Loading this profile...",
+    profileError: "Oops, we couldn’t load these details right now.",
   },
 } as const;
 
 const openedPokemonStorageKey = "pokeda.openedPokemon.v1";
+const pokemonBatchSize = 60;
 
 const filters: Array<PokemonType | "all"> = [
   "all",
@@ -508,8 +525,16 @@ const filters: Array<PokemonType | "all"> = [
 const artUrl = (id: number) =>
   `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`;
 
+const spriteUrl = (id: number) =>
+  `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`;
+
 const cryUrl = (id: number) =>
   `https://raw.githubusercontent.com/PokeAPI/cries/main/cries/pokemon/latest/${id}.ogg`;
+
+const detailsUrl = (id: number) => {
+  const chunkStart = Math.floor((id - 1) / 100) * 100 + 1;
+  return `/pokemon-data/details-${String(chunkStart).padStart(4, "0")}.json`;
+};
 
 function Pokeball({ small = false }: { small?: boolean }) {
   return <span className={`pokeball ${small ? "pokeball--small" : ""}`} aria-hidden="true" />;
@@ -523,14 +548,20 @@ export default function Home() {
   const [playingSlug, setPlayingSlug] = useState<string | null>(null);
   const [soundError, setSoundError] = useState(false);
   const [openedSlugs, setOpenedSlugs] = useState<string[]>([]);
+  const [visibleCount, setVisibleCount] = useState(pokemonBatchSize);
+  const [catalog, setCatalog] = useState<PokemonCatalogEntry[]>(pokemon);
+  const [detailsBySlug, setDetailsBySlug] =
+    useState<Record<string, PokemonDetails>>(curatedDetails);
+  const [profileErrorSlug, setProfileErrorSlug] = useState<string | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const t = ui[language];
-  const selected = pokemon.find((item) => item.slug === selectedSlug) ?? pokemon[0];
+  const selected = catalog.find((item) => item.slug === selectedSlug) ?? catalog[0];
+  const selectedDetails = detailsBySlug[selected.slug];
   const direction = language === "he" ? "rtl" : "ltr";
 
   const filtered = useMemo(() => {
     const normalized = query.trim().toLowerCase();
-    return pokemon.filter((item) => {
+    return catalog.filter((item) => {
       const matchesType = filter === "all" || item.types.includes(filter);
       const matchesQuery =
         !normalized ||
@@ -539,15 +570,94 @@ export default function Home() {
         String(item.id).includes(normalized);
       return matchesType && matchesQuery;
     });
-  }, [filter, query]);
+  }, [catalog, filter, query]);
+  const visiblePokemon = filtered.slice(0, visibleCount);
 
   const chain = selected.chain
-    .map((slug) => pokemon.find((item) => item.slug === slug))
-    .filter((item): item is Pokemon => Boolean(item));
+    .map((slug) => catalog.find((item) => item.slug === slug))
+    .filter((item): item is PokemonCatalogEntry => Boolean(item));
 
   useEffect(() => {
     return () => audioRef.current?.pause();
   }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    void fetch("/pokemon-data/catalog.json")
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`Could not load Pokémon data (${response.status})`);
+        }
+        return response.json() as Promise<unknown>;
+      })
+      .then((payload) => {
+        if (
+          cancelled ||
+          !payload ||
+          typeof payload !== "object" ||
+          !("pokemon" in payload) ||
+          !Array.isArray(payload.pokemon)
+        ) {
+          return;
+        }
+
+        const generatedPokemon = payload.pokemon as PokemonCatalogEntry[];
+        const combined = [
+          ...new Map(
+            [...generatedPokemon, ...pokemon].map((item) => [item.slug, item]),
+          ).values(),
+        ].sort((left, right) => left.id - right.id);
+        setCatalog(combined);
+      })
+      .catch(() => {
+        // The curated catalog remains available if the generated file cannot load.
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (detailsBySlug[selected.slug]) {
+      return;
+    }
+
+    const controller = new AbortController();
+    setProfileErrorSlug(null);
+
+    void fetch(detailsUrl(selected.id), { signal: controller.signal })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`Could not load Pokémon details (${response.status})`);
+        }
+        return response.json() as Promise<unknown>;
+      })
+      .then((payload) => {
+        if (
+          !payload ||
+          typeof payload !== "object" ||
+          !("pokemon" in payload) ||
+          !payload.pokemon ||
+          typeof payload.pokemon !== "object"
+        ) {
+          return;
+        }
+
+        setDetailsBySlug((current) => ({
+          ...(payload.pokemon as Record<string, PokemonDetails>),
+          ...current,
+        }));
+      })
+      .catch((error: unknown) => {
+        if (!(error instanceof DOMException && error.name === "AbortError")) {
+          setProfileErrorSlug(selected.slug);
+        }
+      });
+
+    return () => controller.abort();
+  }, [detailsBySlug, selected.id, selected.slug]);
 
   useEffect(() => {
     let savedSlugs: string[] = [];
@@ -556,8 +666,7 @@ export default function Home() {
       const savedValue: unknown = JSON.parse(window.localStorage.getItem(openedPokemonStorageKey) ?? "[]");
       if (Array.isArray(savedValue)) {
         savedSlugs = savedValue.filter(
-          (slug): slug is string =>
-            typeof slug === "string" && pokemon.some((item) => item.slug === slug),
+          (slug): slug is string => typeof slug === "string",
         );
       }
     } catch {
@@ -627,7 +736,7 @@ export default function Home() {
   };
 
   const surprise = () => {
-    const pool = filtered.length ? filtered : pokemon;
+    const pool = filtered.length ? filtered : catalog;
     const next = pool[Math.floor(Math.random() * pool.length)];
     choosePokemon(next.slug);
   };
@@ -706,18 +815,27 @@ export default function Home() {
 
             <div className="about-block">
               <h3><span aria-hidden="true">👋</span>{t.about}</h3>
-              <p>{selected.description[language]}</p>
+              <p className={!selectedDetails ? "profile-loading" : undefined}>
+                {selectedDetails?.description[language] ??
+                  (profileErrorSlug === selected.slug ? t.profileError : t.loadingProfile)}
+              </p>
             </div>
 
             <div className="powers-block">
               <h3><span aria-hidden="true">⚡</span>{t.powers}</h3>
               <div className="power-list">
-                {selected.powers[language].map((power, index) => (
-                  <span key={power} style={{ "--power-index": index } as React.CSSProperties}>
-                    <i aria-hidden="true">{index + 1}</i>
-                    {power}
+                {selectedDetails ? (
+                  selectedDetails.powers[language].map((power, index) => (
+                    <span key={power} style={{ "--power-index": index } as React.CSSProperties}>
+                      <i aria-hidden="true">{index + 1}</i>
+                      {power}
+                    </span>
+                  ))
+                ) : (
+                  <span className="profile-loading">
+                    {profileErrorSlug === selected.slug ? t.profileError : t.loadingProfile}
                   </span>
-                ))}
+                )}
               </div>
             </div>
 
@@ -736,7 +854,7 @@ export default function Home() {
                       aria-label={`${t.tap}: ${item.name[language]}`}
                     >
                       <span className="evolution-image">
-                        <img src={artUrl(item.id)} alt="" width={86} height={86} />
+                        <img src={spriteUrl(item.id)} alt="" width={86} height={86} loading="lazy" />
                       </span>
                       <strong>{item.name[language]}</strong>
                       <small>#{String(item.id).padStart(3, "0")}</small>
@@ -755,12 +873,24 @@ export default function Home() {
               <span aria-hidden="true">⌕</span>
               <input
                 value={query}
-                onChange={(event) => setQuery(event.target.value)}
+                onChange={(event) => {
+                  setQuery(event.target.value);
+                  setVisibleCount(pokemonBatchSize);
+                }}
                 placeholder={t.search}
                 aria-label={t.search}
               />
               {query && (
-                <button type="button" onClick={() => setQuery("")} aria-label="Clear search">×</button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setQuery("");
+                    setVisibleCount(pokemonBatchSize);
+                  }}
+                  aria-label="Clear search"
+                >
+                  ×
+                </button>
               )}
             </div>
             <button className="surprise-button" type="button" onClick={surprise}>
@@ -775,7 +905,10 @@ export default function Home() {
                 type="button"
                 key={item}
                 className={filter === item ? "is-active" : ""}
-                onClick={() => setFilter(item)}
+                onClick={() => {
+                  setFilter(item);
+                  setVisibleCount(pokemonBatchSize);
+                }}
               >
                 {item === "all" ? t.all : typeNames[item][language]}
               </button>
@@ -788,34 +921,47 @@ export default function Home() {
           </div>
 
           {filtered.length ? (
-            <div className="pokemon-grid">
-              {filtered.map((item) => (
-                <button
-                  type="button"
-                  key={item.slug}
-                  className={`pokemon-tile pokemon-tile--${item.types[0]} ${item.slug === selected.slug ? "is-selected" : ""}`}
-                  onClick={() => choosePokemon(item.slug)}
-                  aria-pressed={item.slug === selected.slug}
-                >
-                  <span className="tile-number">#{String(item.id).padStart(3, "0")}</span>
-                  {openedSlugs.includes(item.slug) ? (
-                    <span
-                      className="tile-opened-indicator"
-                      role="img"
-                      aria-label={t.opened}
-                      title={t.opened}
-                    >
-                      ✓
+            <>
+              <div className="pokemon-grid">
+                {visiblePokemon.map((item) => (
+                  <button
+                    type="button"
+                    key={item.slug}
+                    className={`pokemon-tile pokemon-tile--${item.types[0]} ${item.slug === selected.slug ? "is-selected" : ""}`}
+                    onClick={() => choosePokemon(item.slug)}
+                    aria-pressed={item.slug === selected.slug}
+                  >
+                    <span className="tile-number">#{String(item.id).padStart(3, "0")}</span>
+                    {openedSlugs.includes(item.slug) ? (
+                      <span
+                        className="tile-opened-indicator"
+                        role="img"
+                        aria-label={t.opened}
+                        title={t.opened}
+                      >
+                        ✓
+                      </span>
+                    ) : null}
+                    <span className="tile-art">
+                      <img src={spriteUrl(item.id)} alt="" width={118} height={118} loading="lazy" />
                     </span>
-                  ) : null}
-                  <span className="tile-art">
-                    <img src={artUrl(item.id)} alt="" width={118} height={118} loading="lazy" />
-                  </span>
-                  <strong>{item.name[language]}</strong>
-                  <small>{typeNames[item.types[0]][language]}</small>
+                    <strong>{item.name[language]}</strong>
+                    <small>{typeNames[item.types[0]][language]}</small>
+                  </button>
+                ))}
+              </div>
+              {visiblePokemon.length < filtered.length ? (
+                <button
+                  className="load-more-button"
+                  type="button"
+                  onClick={() => setVisibleCount((count) => count + pokemonBatchSize)}
+                >
+                  <span aria-hidden="true">✦</span>
+                  {t.showMore}
+                  <small>+{Math.min(pokemonBatchSize, filtered.length - visiblePokemon.length)}</small>
                 </button>
-              ))}
-            </div>
+              ) : null}
+            </>
           ) : (
             <div className="empty-state">
               <span aria-hidden="true">🔎</span>
