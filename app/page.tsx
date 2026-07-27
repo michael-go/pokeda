@@ -960,7 +960,11 @@ export default function Home() {
                       <strong>{item.name[language]}</strong>
                       <small>#{String(item.id).padStart(3, "0")}</small>
                     </button>
-                    {index < chain.length - 1 && <span className="evolution-arrow" aria-hidden="true">›</span>}
+                    {index < chain.length - 1 && (
+                      <span className="evolution-arrow" aria-hidden="true">
+                        {language === "he" ? "‹" : "›"}
+                      </span>
+                    )}
                   </div>
                 ))}
               </div>

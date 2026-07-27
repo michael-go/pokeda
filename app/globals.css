@@ -567,6 +567,10 @@ button {
   direction: ltr;
 }
 
+[dir="rtl"] .evolution-chain {
+  direction: rtl;
+}
+
 .evolution-step {
   display: flex;
   align-items: center;
@@ -651,6 +655,8 @@ button {
   color: #b7c1d1;
   font-size: 26px;
   font-weight: 900;
+  direction: ltr;
+  unicode-bidi: isolate;
 }
 
 .evolution-chain--branch .evolution-step button {
@@ -802,14 +808,16 @@ button {
   font-size: 23px;
   font-weight: 900;
   line-height: 1;
+  direction: ltr;
+  unicode-bidi: isolate;
   pointer-events: none;
   animation: filter-more-hint 1.2s ease-in-out infinite;
 }
 
 [dir="rtl"] .filter-shell.has-more::after {
+  content: "‹";
   border-radius: 15px 0 0 15px;
   background: linear-gradient(to left, rgba(247, 249, 252, 0), #f7f9fc 52%);
-  transform: rotate(180deg);
 }
 
 @keyframes filter-more-hint {
