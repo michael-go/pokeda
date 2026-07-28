@@ -956,33 +956,6 @@ button {
   scrollbar-color: #d6deea transparent;
 }
 
-.load-more-feedback {
-  display: flex;
-  flex: 0 0 auto;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  min-height: 25px;
-  margin-top: 7px;
-  border-radius: 10px;
-  background: #eef9f1;
-  color: #397650;
-  font-size: 11px;
-  font-weight: 850;
-  animation: load-more-confirmation .32s ease-out;
-}
-
-.load-more-feedback span {
-  display: grid;
-  place-items: center;
-  width: 15px;
-  height: 15px;
-  border-radius: 50%;
-  background: #4a9b68;
-  color: white;
-  font-size: 9px;
-}
-
 .infinite-scroll-sentinel {
   grid-column: 1 / -1;
   display: flex;
@@ -1052,18 +1025,6 @@ button {
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
-  }
-}
-
-@keyframes load-more-confirmation {
-  from {
-    opacity: 0;
-    transform: translateY(5px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
   }
 }
 

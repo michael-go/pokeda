@@ -1,6 +1,12 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from "react";
 import { morePokemon, type Pokemon, type PokemonType } from "./more-pokemon";
 
 type Language = "he" | "en";
@@ -469,7 +475,6 @@ const ui = {
     soundError: "אופס, הצליל לא זמין כרגע.",
     opened: "כבר גילית את הפוקימון הזה",
     loadingMore: "טוענים עוד פוקימונים...",
-    moreLoaded: "נוספו עוד {count} פוקימונים!",
     filterByType: "סינון הגלריה לפי {type}",
     loadingProfile: "טוענים את הפרטים...",
     profileError: "אופס, לא הצלחנו לטעון את הפרטים כרגע.",
@@ -494,7 +499,6 @@ const ui = {
     soundError: "Oops, this sound is unavailable right now.",
     opened: "You already explored this Pokémon",
     loadingMore: "Loading more Pokémon...",
-    moreLoaded: "{count} more Pokémon added!",
     filterByType: "Filter the gallery by {type}",
     loadingProfile: "Loading this profile...",
     profileError: "Oops, we couldn’t load these details right now.",
@@ -502,7 +506,85 @@ const ui = {
 } as const;
 
 const openedPokemonStorageKey = "pokeda.openedPokemon.v1";
+const openedPokemonChangeEvent = "pokeda:opened-pokemon-change";
 const pokemonBatchSize = 60;
+let openedPokemonMemorySnapshot = "[]";
+
+const normalizeOpenedPokemonSnapshot = (value: string | null) => {
+  try {
+    const parsed: unknown = JSON.parse(value ?? "[]");
+    if (Array.isArray(parsed)) {
+      return JSON.stringify([
+        ...new Set(
+          parsed.filter((slug): slug is string => typeof slug === "string"),
+        ),
+      ]);
+    }
+  } catch {
+    // Fall through to an empty progress snapshot.
+  }
+
+  return "[]";
+};
+
+const getOpenedPokemonSnapshot = () => {
+  try {
+    const savedSnapshot = window.localStorage.getItem(openedPokemonStorageKey);
+    if (savedSnapshot !== null) {
+      openedPokemonMemorySnapshot =
+        normalizeOpenedPokemonSnapshot(savedSnapshot);
+    }
+  } catch {
+    // Use in-memory progress when browser storage is unavailable.
+  }
+
+  return openedPokemonMemorySnapshot;
+};
+
+const getServerOpenedPokemonSnapshot = () => "[]";
+
+const subscribeToOpenedPokemon = (onStoreChange: () => void) => {
+  const handleStorage = (event: StorageEvent) => {
+    if (event.key === openedPokemonStorageKey) {
+      openedPokemonMemorySnapshot = normalizeOpenedPokemonSnapshot(
+        event.newValue,
+      );
+      onStoreChange();
+    }
+  };
+
+  window.addEventListener("storage", handleStorage);
+  window.addEventListener(openedPokemonChangeEvent, onStoreChange);
+
+  return () => {
+    window.removeEventListener("storage", handleStorage);
+    window.removeEventListener(openedPokemonChangeEvent, onStoreChange);
+  };
+};
+
+const markPokemonOpened = (slug: string) => {
+  const openedSlugs = JSON.parse(getOpenedPokemonSnapshot()) as string[];
+  if (openedSlugs.includes(slug)) {
+    return;
+  }
+
+  openedPokemonMemorySnapshot = JSON.stringify([...openedSlugs, slug]);
+
+  try {
+    window.localStorage.setItem(
+      openedPokemonStorageKey,
+      openedPokemonMemorySnapshot,
+    );
+  } catch {
+    // In-memory progress remains available for this visit.
+  }
+
+  window.dispatchEvent(new Event(openedPokemonChangeEvent));
+};
+
+function randomItem<T>(items: readonly T[]) {
+  return items[Math.floor(Math.random() * items.length)];
+}
 
 const filters: Array<PokemonType | "all"> = [
   "all",
@@ -679,6 +761,8 @@ function ProgressivePokemonImage({
   }, [artworkDelay, id, isNearViewport, loading, readySpriteId]);
 
   return (
+    // This component deliberately manages its own progressive sprite/artwork loading.
+    // eslint-disable-next-line @next/next/no-img-element
     <img
       key={id}
       ref={imageRef}
@@ -713,7 +797,15 @@ export default function Home() {
   const [filter, setFilter] = useState<PokemonType | "all">("all");
   const [playingSlug, setPlayingSlug] = useState<string | null>(null);
   const [soundError, setSoundError] = useState(false);
-  const [openedSlugs, setOpenedSlugs] = useState<string[]>([]);
+  const openedPokemonSnapshot = useSyncExternalStore(
+    subscribeToOpenedPokemon,
+    getOpenedPokemonSnapshot,
+    getServerOpenedPokemonSnapshot,
+  );
+  const openedSlugs = useMemo(
+    () => JSON.parse(openedPokemonSnapshot) as string[],
+    [openedPokemonSnapshot],
+  );
   const [visibleCount, setVisibleCount] = useState(pokemonBatchSize);
   const [newPokemonBatch, setNewPokemonBatch] = useState<{
     start: number;
@@ -836,8 +928,6 @@ export default function Home() {
     const row = evolutionChainRef.current;
     const finalEvolution = evolutionEndRef.current;
 
-    setShowEvolutionScrollHint(false);
-
     if (!row || !finalEvolution || !("IntersectionObserver" in window)) {
       return;
     }
@@ -897,7 +987,6 @@ export default function Home() {
     }
 
     const controller = new AbortController();
-    setProfileErrorSlug(null);
 
     void fetch(detailsUrl(selected.id), { signal: controller.signal })
       .then((response) => {
@@ -932,28 +1021,7 @@ export default function Home() {
   }, [detailsBySlug, selected.id, selected.slug]);
 
   useEffect(() => {
-    let savedSlugs: string[] = [];
-
-    try {
-      const savedValue: unknown = JSON.parse(window.localStorage.getItem(openedPokemonStorageKey) ?? "[]");
-      if (Array.isArray(savedValue)) {
-        savedSlugs = savedValue.filter(
-          (slug): slug is string => typeof slug === "string",
-        );
-      }
-    } catch {
-      savedSlugs = [];
-    }
-
-    setOpenedSlugs((current) => {
-      const next = [...new Set([...savedSlugs, ...current, selectedSlug])];
-      try {
-        window.localStorage.setItem(openedPokemonStorageKey, JSON.stringify(next));
-      } catch {
-        // Progress still works for this visit when browser storage is unavailable.
-      }
-      return next;
-    });
+    markPokemonOpened(selectedSlug);
   }, [selectedSlug]);
 
   const stopSound = () => {
@@ -1001,6 +1069,8 @@ export default function Home() {
   const choosePokemon = (slug: string) => {
     stopSound();
     setSoundError(false);
+    setProfileErrorSlug((current) => (current === slug ? null : current));
+    setShowEvolutionScrollHint(false);
     setSelectedSlug(slug);
     if (window.innerWidth < 850) {
       requestAnimationFrame(() => document.querySelector(".detail-card")?.scrollIntoView({ behavior: "smooth", block: "start" }));
@@ -1009,7 +1079,7 @@ export default function Home() {
 
   const surprise = () => {
     const pool = filtered.length ? filtered : catalog;
-    const next = pool[Math.floor(Math.random() * pool.length)];
+    const next = randomItem(pool);
     choosePokemon(next.slug);
   };
 
@@ -1246,7 +1316,6 @@ export default function Home() {
           </div>
 
           {filtered.length ? (
-            <>
               <div ref={pokemonGridRef} className="pokemon-grid">
                 {visiblePokemon.map((item, index) => (
                   <button
@@ -1297,13 +1366,6 @@ export default function Home() {
                   </div>
                 ) : null}
               </div>
-              {newPokemonBatch ? (
-                <div className="load-more-feedback" role="status" aria-live="polite">
-                  <span aria-hidden="true">✓</span>
-                  {t.moreLoaded.replace("{count}", String(newPokemonBatch.count))}
-                </div>
-              ) : null}
-            </>
           ) : (
             <div className="empty-state">
               <span aria-hidden="true">🔎</span>
