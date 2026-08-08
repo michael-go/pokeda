@@ -37,7 +37,7 @@ test("server-renders the Pokeda gallery", async () => {
   );
   assert.match(html, /<main class="app type-bg--electric" dir="rtl">/i);
   assert.match(html, /<h1>פוקדע<\/h1>/);
-  assert.match(html, /placeholder="חיפוש לפי שם\.\.\."/);
+  assert.match(html, /placeholder="חיפוש לפי שם או מספר\.\.\."/);
   assert.match(html, /class="pokemon-grid"/);
   assert.match(html, /class="infinite-scroll-sentinel"/);
   assert.match(html, /טוענים עוד פוקימונים\.\.\./);

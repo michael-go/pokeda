@@ -458,7 +458,7 @@ const ui = {
   he: {
     title: "פוקדע",
     eyebrow: "הפוקדקס שלי",
-    search: "חיפוש לפי שם...",
+    search: "חיפוש לפי שם או מספר...",
     all: "הכול",
     discover: "הפתעה!",
     results: "פוקימונים",
@@ -482,7 +482,7 @@ const ui = {
   en: {
     title: "Pokeda",
     eyebrow: "My Pokédex",
-    search: "Search by name...",
+    search: "Search by name or number...",
     all: "All",
     discover: "Surprise me!",
     results: "Pokémon",
